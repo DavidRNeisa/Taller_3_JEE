@@ -30,7 +30,12 @@ El estudiante puede acceder al contenido de las clases guardadas en la bd desde 
 
 
 - Realizar el diseño A. S y diseño detallado.
-EL diseño debe contener como minimo deseño  la Logica, en donde el back utilizara Springboot,  diseño el desarrollo,  de procesos y despliegue 
+EL diseño debe contener como minimo:
+1. diseño de la Logica en donde el back utilizara Springboot 
+2. diseño el desarrollo 
+3. diseño de procesos
+4. diseño de despliegue
+5. diagrama 4+1(diagrama de escenario) 
 - la presentacion sera mediante web, en donde se podra usar JSF Angular o react.
 
 # 📚 Plataforma Académica LMS
