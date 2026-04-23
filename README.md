@@ -28,6 +28,8 @@ El estudiante puede acceder al contenido de las clases guardadas en la bd desde 
 
 - Generar un módulo de recomendaciones que de acuerdo al avance del estudiante guardado en la base de datos, le sugiera el tema siguiente o los refuerzos q estan dentro de la bd.
 
+El avance del estudiante se puede se ve evidenciado en la nota que recibe de la evaluacion de una clase ya vista, trabajos entregados, si el trabajo fue entragado a timepo, tarde o no entrago.
+
 
 - Realizar el diseño A. S y diseño detallado.
 EL diseño debe contener como minimo:
@@ -38,13 +40,13 @@ EL diseño debe contener como minimo:
 5. diagrama 4+1(diagrama de escenario) 
 - la presentacion sera mediante web, en donde se podra usar JSF Angular o react.
 
-# 📚 Plataforma Académica LMS
+#  Plataforma Académica LMS
 
 Sistema web para la gestión de cursos, contenido educativo, tareas y calificaciones.
 
 ---
 
-## 🚀 Stack tecnológico
+##  Stack tecnológico
 
 * **Frontend:** Angular
 * **Backend:** Spring Boot
@@ -52,10 +54,8 @@ Sistema web para la gestión de cursos, contenido educativo, tareas y calificaci
 
 ---
 
-## 🧩 Funcionalidades principales
+##  Funcionalidades principales
 
-* Autenticación de usuarios (JWT)
-* Gestión de cursos
 * Inscripción de estudiantes
 * Publicación de contenido por clase
 * Creación de tareas
@@ -64,7 +64,7 @@ Sistema web para la gestión de cursos, contenido educativo, tareas y calificaci
 
 ---
 
-## 👥 Roles
+##  Roles
 
 * **Alumno**
 
@@ -86,7 +86,7 @@ Sistema web para la gestión de cursos, contenido educativo, tareas y calificaci
 
 ---
 
-## 🏗️ Arquitectura
+##  Arquitectura
 
 ```mermaid
 flowchart TD
@@ -97,7 +97,7 @@ flowchart TD
 
 ---
 
-## 🗄️ Modelo de datos
+##  Modelo de datos
 
 ### Entidades
 
@@ -110,10 +110,9 @@ flowchart TD
 
 ---
 
-## 🔗 Relaciones
+##  Relaciones
 
-```mermaid
-erDiagram
+```mermaiderDiagram
     USUARIO ||--o{ INSCRIPCION : realiza
     CURSO ||--o{ INSCRIPCION : recibe
     USUARIO ||--o{ CURSO : crea
@@ -125,7 +124,7 @@ erDiagram
 
 ---
 
-## 📦 Estructura de contenido
+##  Estructura de contenido
 
 Entidad flexible `CONTENIDO`:
 
@@ -137,7 +136,7 @@ Permite que cada clase tenga un formato diferente.
 
 ---
 
-## 🔄 Flujo principal
+##  Flujo principal
 
 ```mermaid
 flowchart TD
@@ -150,7 +149,7 @@ flowchart TD
 
 ---
 
-## 📁 Estructura del backend
+##  Estructura del backend
 
 ```text
 src/
@@ -164,8 +163,7 @@ src/
 └─ exceptions/
 ```
 
-
-## ⚙️ Reglas clave
+##  Reglas clave
 
 * Un alumno solo accede a cursos inscritos
 * Un docente solo gestiona sus cursos
