@@ -1,5 +1,6 @@
 <main class="courses-page">
   <header class="page-header">
+    <a routerLink="/home" class="back-btn">← Volver a inicio</a>
     <h1>Mis Cursos</h1>
     <p class="subtitle">Accede a tu contenido de Estructuras de Datos</p>
   </header>
@@ -33,7 +34,7 @@
         <div class="progress-fill" [style.width.%]="course.progress" [ngClass]="getProgressClass(course.progress)"></div>
       </div>
 
-      <button class="btn-view" [disabled]="!course.enrolled">
+      <button class="btn-view" [disabled]="!course.enrolled" (click)="viewCourse(course.id)" [routerLink]="course.enrolled ? ['/courses', course.id] : null">
         {{ course.enrolled ? 'Ver curso' : 'No inscrito' }}
       </button>
     </article>

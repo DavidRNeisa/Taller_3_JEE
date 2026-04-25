@@ -1,0 +1,71 @@
+<main class="detail-page">
+  <header class="page-header">
+    <a routerLink="/courses" class="back-btn">← Volver a cursos</a>
+    <div class="header-content" *ngIf="course">
+      <h1>{{ course.title }}</h1>
+      <p class="description">{{ course.description }}</p>
+      <div class="header-stats">
+        <div class="stat">
+          <span class="label">Lecciones</span>
+          <span class="value">{{ lessons.length }}/{{ course.lessonsCount }}</span>
+        </div>
+        <div class="stat">
+          <span class="label">Progreso General</span>
+          <span class="value">{{ course.progress }}%</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading">
+    <p>Cargando lecciones...</p>
+  </div>
+
+  <section *ngIf="!loading" class="lessons-container">
+    <article *ngFor="let lesson of lessons; let i = index" class="lesson-card" [class.completed]="lesson.completed">
+      <div class="lesson-header">
+        <span class="lesson-number">{{ lesson.order }}</span>
+        <div class="lesson-info">
+          <h2>{{ lesson.title }}</h2>
+          <p class="lesson-desc">{{ lesson.description }}</p>
+        </div>
+        <div class="lesson-badges">
+          <span *ngIf="lesson.completed" class="badge badge-completed">✓ Completada</span>
+          <span *ngIf="lesson.hasAssignments" class="badge badge-assignment">📋 Tarea</span>
+          <span *ngIf="lesson.hasAssignments && hasAssignmentsOverdue(lesson.assignmentsDue)" class="badge badge-overdue">⚠ Vencida</span>
+        </div>
+      </div>
+
+      <div class="lesson-resources" *ngIf="lesson.resources && lesson.resources.length > 0">
+        <p class="resources-label">Contenidos:</p>
+        <div class="resources-list">
+          <a *ngFor="let resource of lesson.resources" href="#" class="resource-item" [title]="resource.title">
+            <span class="resource-icon">{{ getContentIcon(resource.type) }}</span>
+            <span class="resource-type">{{ resource.type }}</span>
+            <span class="resource-title">{{ resource.title }}</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="lesson-footer">
+        <div class="progress-section">
+          <span class="progress-label">Progreso</span>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="lesson.progress" [ngClass]="getProgressClass(lesson.progress)"></div>
+          </div>
+          <span class="progress-value">{{ lesson.progress }}%</span>
+        </div>
+
+        <div class="lesson-actions">
+          <button class="btn-primary">Ver contenido</button>
+          <button *ngIf="lesson.hasAssignments" class="btn-secondary">Ver tarea</button>
+        </div>
+      </div>
+
+      <div *ngIf="lesson.assignmentsDue" class="assignment-due">
+        <span class="due-label">Tarea vence:</span>
+        <span class="due-date">{{ lesson.assignmentsDue | date: 'short' }}</span>
+      </div>
+    </article>
+  </section>
+</main>
