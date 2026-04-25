@@ -29,7 +29,7 @@ El estudiante puede acceder al contenido de las clases guardadas en la bd desde 
 
 - Generar un módulo de recomendaciones que de acuerdo al avance del estudiante guardado en la base de datos, le sugiera el tema siguiente o los refuerzos q estan dentro de la bd.
 
-El avance del estudiante se puede se ve evidenciado en la nota que recibe de la evaluacion de una clase ya vista, trabajos entregados, si el trabajo fue entragado a timepo, tarde o no entrago.
+- El avance del estudiante se puede se ve evidenciado en la nota que recibe de la evaluacion de una clase ya vista, trabajos entregados, si el trabajo fue entragado a tiempo, tarde o no entregó.
 
 
 - Realizar el diseño A. S y diseño detallado.
