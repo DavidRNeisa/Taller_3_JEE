@@ -10,6 +10,24 @@
   margin: 0 auto 2rem;
 }
 
+.back-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #ffffff;
+  border: 1px solid #d1c9bd;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #0f766e;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  transition: all 200ms ease;
+}
+
+.back-btn:hover {
+  background: #ecfeff;
+  border-color: #0f766e;
+}
+
 .page-header h1 {
   margin: 0 0 0.5rem;
   font-size: clamp(2rem, 5vw, 3rem);
