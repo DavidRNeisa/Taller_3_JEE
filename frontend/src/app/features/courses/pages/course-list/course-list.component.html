@@ -1,0 +1,41 @@
+<main class="courses-page">
+  <header class="page-header">
+    <h1>Mis Cursos</h1>
+    <p class="subtitle">Accede a tu contenido de Estructuras de Datos</p>
+  </header>
+
+  <div *ngIf="loading" class="loading">
+    <p>Cargando cursos...</p>
+  </div>
+
+  <section *ngIf="!loading" class="courses-grid">
+    <article *ngFor="let course of courses" class="course-card" [class.enrolled]="course.enrolled">
+      <div class="card-header">
+        <h2>{{ course.title }}</h2>
+        <span *ngIf="course.enrolled" class="badge badge-enrolled">Inscrito</span>
+        <span *ngIf="!course.enrolled" class="badge badge-available">Disponible</span>
+      </div>
+
+      <p class="description">{{ course.description }}</p>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Lecciones</span>
+          <span class="stat-value">{{ course.lessonsCount }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Progreso</span>
+          <span class="stat-value">{{ course.progress }}%</span>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="course.progress" [ngClass]="getProgressClass(course.progress)"></div>
+      </div>
+
+      <button class="btn-view" [disabled]="!course.enrolled">
+        {{ course.enrolled ? 'Ver curso' : 'No inscrito' }}
+      </button>
+    </article>
+  </section>
+</main>

@@ -1,1 +1,116 @@
-// Angular file: src/app/features/home/home.component.css
+:host {
+  display: block;
+}
+
+.screen {
+  min-height: 100vh;
+  padding: 3rem 1.25rem;
+  background:
+    radial-gradient(circle at top right, #f7c948 0%, transparent 35%),
+    radial-gradient(circle at bottom left, #5bc0be 0%, transparent 38%),
+    #f4f1ea;
+  color: #1b1f24;
+  font-family: "Segoe UI", "Noto Sans", sans-serif;
+}
+
+.hero {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #dfd7c8;
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 12px 30px rgba(35, 38, 42, 0.08);
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0e7490;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0.6rem 0 0;
+  font-size: clamp(1.8rem, 4.8vw, 2.7rem);
+  line-height: 1.15;
+}
+
+.subtitle {
+  margin: 0.9rem 0 0;
+  font-size: 1.03rem;
+  color: #4b5563;
+  max-width: 60ch;
+}
+
+.actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.2rem;
+  font-weight: 650;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+}
+
+.btn-primary {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #0b5f59;
+}
+
+.btn-ghost {
+  background: #ecfeff;
+  color: #155e75;
+}
+
+.summary {
+  max-width: 760px;
+  margin: 1rem auto 0;
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #dfd7c8;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 8px 20px rgba(35, 38, 42, 0.06);
+}
+
+.label {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.value {
+  margin: 0.45rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 1.35rem;
+  }
+
+  .summary {
+    grid-template-columns: 1fr;
+  }
+}
