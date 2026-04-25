@@ -22,6 +22,7 @@ Los recursos de cada clase pueden ser:
 
 y otros posbiles tipos de archivos.
 
+- No incluir nada de Login en esta entrega, es sólo una visión por encima de front y traer información de la base de datos.
 
 - Crear “simular” el desarrollo de un curso de E. D( estructura de datos) para un estudiante.
 El estudiante puede acceder al contenido de las clases guardadas en la bd desde la web 
