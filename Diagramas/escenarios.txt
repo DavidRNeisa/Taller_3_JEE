@@ -1,60 +1,61 @@
 workspace {
 
     model {
-        student = person "Alumno" "Consume contenido, entrega tareas y recibe recomendaciones"
+        alumno = person "Alumno" "Consume contenido, entrega tareas y revisa recomendaciones"
+        docente = person "Docente" "Publica contenido, crea tareas y califica entregas"
+        admin = person "Administrador" "Gestiona catalogo y operacion academica"
 
-        lms = softwareSystem "Plataforma LMS" "Sistema de aprendizaje para curso de Estructuras de Datos" {
-
-            web         = container "Frontend Angular"         "Interfaz web del sistema"                                   "Angular"
-            api         = container "Backend API"              "Logica de negocio y servicios REST"                         "Spring Boot"
-            db          = container "Base de Datos"            "Persistencia de informacion academica"                      "PostgreSQL"
-            storage     = container "Storage"                  "Almacenamiento de recursos multimedia"                      "File Storage"
-            recommender = container "Motor de recomendaciones" "Sugiere proximos temas o refuerzos segun avance del alumno" "Spring Service"
-
-            ucLogin             = container "UC: Iniciar sesion"           "Alumno se autentica con usuario y contrasena"
-            ucVerCursos         = container "UC: Ver curso inscrito"       "Alumno consulta el curso de Estructuras de Datos en el que ya esta matriculado"
-            ucConsumirContenido = container "UC: Consumir contenido"       "Alumno accede a los recursos de una clase ya existente: video, PDF, HTML, imagen, URL, animacion, documento"
-            ucEntregarTarea     = container "UC: Entregar tarea"           "Alumno sube su trabajo. Sistema registra automaticamente si fue a tiempo, tarde o no entrego"
-            ucConsultarNotas    = container "UC: Consultar calificaciones" "Alumno revisa la nota que se asigna automaticamente al entregar la tarea"
-            ucVerRecomendacion  = container "UC: Ver recomendacion"        "Sistema sugiere siguiente clase o refuerzo segun nota obtenida y puntualidad de entrega"
+        lms = softwareSystem "Plataforma LMS" "Sistema web para el curso de Estructuras de Datos" {
+            web = container "Frontend Web" "Interfaz para alumnos y docentes" "Angular"
+            api = container "API LMS" "Logica de negocio y endpoints REST" "Spring Boot"
+            rec = container "Servicio de Recomendaciones" "Sugiere siguiente clase o refuerzo" "Spring Service"
+            batch = container "Carga Inicial" "Carga curso, clases y recursos" "Spring Batch"
+            db = container "Base de Datos" "Datos academicos y progreso" "PostgreSQL"
+            storage = container "Almacenamiento" "Archivos de contenido y entregas" "File Storage"
         }
 
-        student -> ucLogin             "Inicia sesion"
-        student -> ucVerCursos         "Consulta su curso"
-        student -> ucConsumirContenido "Accede al contenido de la clase"
-        student -> ucEntregarTarea     "Sube su trabajo"
-        student -> ucConsultarNotas    "Revisa su calificacion"
-        student -> ucVerRecomendacion  "Recibe sugerencia de siguiente tema o refuerzo"
+        alumno -> web "Navega el curso y entrega tareas"
+        docente -> web "Administra contenido y calificaciones"
+        admin -> web "Supervisa configuracion academica"
 
-        ucLogin             -> api        "Autentica via JWT"
-        ucVerCursos         -> api        "GET /cursos/inscrito"
-        ucConsumirContenido -> api        "GET /clases/{id}/contenido"
-        ucConsumirContenido -> storage    "Descarga recurso multimedia"
-        ucEntregarTarea     -> api        "POST /entregas — nota se calcula automaticamente"
-        ucConsultarNotas    -> api        "GET /calificaciones"
-        ucVerRecomendacion  -> recommender "GET /recomendaciones/{alumnoId}"
-
-        ucVerCursos         -> ucConsumirContenido "include"
-        ucConsumirContenido -> ucEntregarTarea     "include"
-        ucEntregarTarea     -> ucConsultarNotas    "include: nota generada al entregar"
-        ucEntregarTarea     -> ucVerRecomendacion  "extend: dispara evaluacion de avance"
-        ucConsultarNotas    -> ucVerRecomendacion  "extend: nota actualiza recomendacion"
-
-        recommender -> db "Consulta notas, entregas y cobertura tematica"
-        api         -> db "Lee y escribe"
-        api         -> storage "Lee recursos"
-        api         -> recommender "Solicita recomendaciones"
-        web         -> api "Consume API REST"
+        web -> api "REST/JSON"
+        api -> db "CRUD de cursos, clases, tareas, entregas y notas"
+        api -> storage "Lectura/escritura de archivos"
+        api -> rec "Solicita recomendacion por alumno"
+        rec -> db "Consulta avance, notas y puntualidad"
+        batch -> db "Carga inicial de datos"
+        batch -> storage "Carga recursos iniciales"
     }
 
     views {
-        systemContext lms {
-            include *
+        systemContext lms "contexto" {
+            include alumno
+            include docente
+            include admin
+            include lms
             autoLayout lr
+            title "Contexto del sistema LMS"
         }
 
-        container lms {
+        container lms "contenedores" {
             include *
+            autoLayout lr
+            title "Vista de contenedores LMS"
+        }
+
+        dynamic lms "escenario_alumno" {
+            title "Escenario principal: consumir contenido, entregar tarea y recibir recomendacion"
+            alumno -> web "1. Entra al curso"
+            web -> api "2. Solicita clases y contenido"
+            api -> db "3. Consulta progreso e historial"
+            api -> storage "4. Obtiene recursos (PDF, video, imagen, enlaces)"
+            alumno -> web "5. Sube entrega"
+            web -> api "6. Registra entrega"
+            api -> db "7. Guarda entrega y nota"
+            api -> rec "8. Pide recomendacion"
+            rec -> db "9. Evalua avance y rendimiento"
+            rec -> api "10. Retorna sugerencia"
+            api -> web "11. Muestra nota y recomendacion"
             autoLayout lr
         }
 

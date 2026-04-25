@@ -1,0 +1,199 @@
+Project LMS_Plataforma_Academica {
+  database_type: "PostgreSQL"
+  Note: "Modelo organizado para dbdiagram.io"
+}
+
+// =========================
+// ENUMS
+// =========================
+
+Enum rol_usuario {
+  ALUMNO
+  DOCENTE
+  ADMIN
+}
+
+Enum tipo_contenido {
+  VIDEO
+  PDF
+  HTML
+  WORD
+  EXCEL
+  PPTX
+  IMAGEN
+  URL
+  ANIMACION
+  OTRO
+}
+
+Enum estado_entrega {
+  A_TIEMPO
+  TARDE
+  NO_ENTREGO
+}
+
+Enum tipo_recomendacion {
+  SIGUIENTE_CLASE
+  REFUERZO
+}
+
+// =========================
+// TABLAS
+// =========================
+
+Table usuario {
+  id             bigint [pk, increment]
+  rol            rol_usuario [not null]
+  nombre         varchar(120) [not null]
+  email          varchar(150) [not null, unique]
+  activo         boolean [not null, default: true]
+  fecha_creacion timestamp [not null]
+
+  Note: "Usuarios del sistema"
+}
+
+Table curso {
+  id             bigint [pk, increment]
+  docente_id     bigint [not null]
+  titulo         varchar(200) [not null]
+  descripcion    text
+  total_clases   int [not null, default: 36]
+  fecha_creacion timestamp [not null]
+
+  Note: "Curso de Estructuras de Datos"
+}
+
+Table clase {
+  id             bigint [pk, increment]
+  curso_id       bigint [not null]
+  numero         int [not null]
+  titulo         varchar(200) [not null]
+  descripcion    text
+  fecha_creacion timestamp [not null]
+
+  Indexes {
+    (curso_id, numero) [unique]
+  }
+
+  Note: "Cada curso contiene multiples clases"
+}
+
+Table contenido {
+  id               bigint [pk, increment]
+  clase_id         bigint [not null]
+  titulo           varchar(200) [not null]
+  tipo             tipo_contenido [not null]
+  url_recurso      text [not null]
+  orden            int [not null]
+  fecha_publicacion timestamp [not null]
+
+  Indexes {
+    (clase_id, orden) [unique]
+  }
+
+  Note: "Recursos de clase"
+}
+
+Table tarea {
+  id           bigint [pk, increment]
+  clase_id     bigint [not null]
+  titulo       varchar(200) [not null]
+  descripcion  text
+  fecha_limite timestamp [not null]
+  ponderacion  decimal(5,2) [not null, default: 100.00]
+
+  Note: "Actividades evaluables"
+}
+
+Table inscripcion {
+  id                bigint [pk, increment]
+  alumno_id         bigint [not null]
+  curso_id          bigint [not null]
+  fecha_inscripcion timestamp [not null]
+
+  Indexes {
+    (alumno_id, curso_id) [unique]
+  }
+
+  Note: "Relacion alumno-curso"
+}
+
+Table entrega {
+  id           bigint [pk, increment]
+  alumno_id    bigint [not null]
+  tarea_id     bigint [not null]
+  fecha_entrega timestamp
+  archivo_url  text
+  estado       estado_entrega [not null]
+  observacion  text
+
+  Indexes {
+    (alumno_id, tarea_id) [unique]
+  }
+
+  Note: "Registro de entrega"
+}
+
+Table calificacion {
+  id                bigint [pk, increment]
+  entrega_id        bigint [not null, unique]
+  alumno_id         bigint [not null]
+  clase_id          bigint [not null]
+  nota              decimal(4,2) [not null]
+  fecha_calificacion timestamp [not null]
+
+  Note: "Nota asociada a entrega"
+}
+
+Table recomendacion {
+  id               bigint [pk, increment]
+  alumno_id        bigint [not null]
+  clase_id         bigint
+  tipo             tipo_recomendacion [not null]
+  mensaje          text [not null]
+  fecha_generacion timestamp [not null]
+
+  Note: "Sugerencias segun avance"
+}
+
+// =========================
+// AGRUPACION VISUAL (dbdiagram)
+// =========================
+
+TableGroup "Administracion" {
+  usuario
+  curso
+  clase
+  contenido
+  tarea
+}
+
+TableGroup "Proceso Academico" {
+  inscripcion
+  entrega
+  calificacion
+  recomendacion
+}
+
+// =========================
+// RELACIONES
+// =========================
+
+// Gestion y catalogo
+Ref: curso.docente_id > usuario.id
+Ref: clase.curso_id > curso.id
+Ref: contenido.clase_id > clase.id
+Ref: tarea.clase_id > clase.id
+
+// Participacion del alumno
+Ref: inscripcion.alumno_id > usuario.id
+Ref: inscripcion.curso_id > curso.id
+Ref: entrega.alumno_id > usuario.id
+Ref: entrega.tarea_id > tarea.id
+
+// Evaluacion y recomendaciones
+Ref: calificacion.entrega_id > entrega.id
+Ref: calificacion.alumno_id > usuario.id
+Ref: calificacion.clase_id > clase.id
+Ref: recomendacion.alumno_id > usuario.id
+Ref: recomendacion.clase_id > clase.id
