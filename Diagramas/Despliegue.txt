@@ -1,0 +1,39 @@
+diagrama de despliegue:@startuml
+title Diagrama de despliegue — LMS
+
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam defaultFontName Arial
+
+node "Dispositivo del estudiante" as client {
+  artifact "Navegador web" as browser
+}
+
+node "Servidor Frontend" as frontendNode {
+  artifact "Angular App" as angularApp
+}
+
+node "Servidor Backend" as backendNode {
+  artifact "Spring Boot API" as springApi
+}
+
+node "Servidor Batch" as batchNode {
+  artifact "Spring Batch Job" as batchJob
+}
+
+database "Servidor PostgreSQL" as dbNode {
+  artifact "Base de datos LMS" as db
+}
+
+node "Almacenamiento de archivos" as storageNode {
+  artifact "PDF / PPTX / video / imagen" as files
+}
+
+browser --> angularApp : HTTPS
+angularApp --> springApi : REST / JSON
+springApi --> db : JDBC / SQL
+springApi --> files : I/O / HTTP
+batchJob --> db : Inserción inicial
+batchJob --> files : Carga de recursos
+
+@enduml

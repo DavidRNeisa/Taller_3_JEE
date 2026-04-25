@@ -1,0 +1,166 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor #EEEDFE
+    BorderColor #534AB7
+    ArrowColor #534AB7
+    FontName Arial
+}
+
+class Alumno {
+    - id: Long
+    - nombre: String
+    - email: String
+    - claseActual: Integer
+    + verCurso(): Curso
+    + consumirContenido(claseId: Long): List<Contenido>
+    + entregarTarea(tareaId: Long, archivo: MultipartFile): Entrega
+    + consultarCalificaciones(): List<Calificacion>
+    + verRecomendacion(): Recomendacion
+}
+
+class Curso {
+    - id: Long
+    - titulo: String
+    - descripcion: String
+    - totalClases: Integer
+    + getClases(): List<Clase>
+}
+
+class Clase {
+    - id: Long
+    - numero: Integer
+    - titulo: String
+    - descripcion: String
+    - cursoId: Long
+    + getContenidos(): List<Contenido>
+    + getTareas(): List<Tarea>
+}
+
+class Contenido {
+    - id: Long
+    - titulo: String
+    - tipo: TipoContenido
+    - url: String
+    - orden: Integer
+    - claseId: Long
+}
+
+enum TipoContenido {
+    VIDEO
+    PDF
+    HTML
+    WORD
+    EXCEL
+    PPTX
+    IMAGEN
+    URL
+    ANIMACION
+}
+
+class Tarea {
+    - id: Long
+    - titulo: String
+    - descripcion: String
+    - fechaLimite: LocalDateTime
+    - ponderacion: Double
+    - claseId: Long
+    + estaVencida(): Boolean
+}
+
+class Entrega {
+    - id: Long
+    - alumnoId: Long
+    - tareaId: Long
+    - fechaEntrega: LocalDateTime
+    - archivoUrl: String
+    - estadoEntrega: EstadoEntrega
+    + calcularEstado(fechaLimite: LocalDateTime): EstadoEntrega
+}
+
+enum EstadoEntrega {
+    A_TIEMPO
+    TARDE
+    NO_ENTREGO
+}
+
+class Calificacion {
+    - id: Long
+    - entregaId: Long
+    - alumnoId: Long
+    - claseId: Long
+    - nota: Double
+    - fechaCalificacion: LocalDateTime
+    + calcularNota(entrega: Entrega): Double
+}
+
+class Inscripcion {
+    - id: Long
+    - alumnoId: Long
+    - cursoId: Long
+    - fechaInscripcion: LocalDateTime
+}
+
+class Recomendacion {
+    - id: Long
+    - alumnoId: Long
+    - claseId: Long
+    - tipo: TipoRecomendacion
+    - mensaje: String
+    - fechaGeneracion: LocalDateTime
+}
+
+enum TipoRecomendacion {
+    SIGUIENTE_CLASE
+    REFUERZO
+}
+
+class RecomendacionService {
+    + generarRecomendacion(alumnoId: Long): Recomendacion
+    - evaluarNota(nota: Double): Boolean
+    - evaluarPuntualidad(entrega: Entrega): Boolean
+    - evaluarCobertura(alumnoId: Long): Integer
+}
+
+class EntregaService {
+    + registrarEntrega(alumnoId: Long, tareaId: Long, archivo: MultipartFile): Entrega
+    - determinarEstado(fechaEntrega: LocalDateTime, fechaLimite: LocalDateTime): EstadoEntrega
+    - generarNotaAutomatica(entrega: Entrega): Calificacion
+}
+
+class BatchLoaderJob {
+    - cursoStep: CursoStep
+    - contenidoStep: ContenidoStep
+    - fileUploadStep: FileUploadStep
+    + ejecutar(): void
+    + cargarClases(): void
+    + cargarContenidos(): void
+    + subirArchivos(): void
+}
+
+Alumno        "1"  --o  "1"    Inscripcion       : tiene
+Inscripcion   "1"  --o  "1"    Curso             : pertenece a
+Curso         "1"  *--  "36"   Clase             : contiene
+Clase         "1"  *--  "1..*" Contenido         : tiene
+Clase         "1"  o--  "0..*" Tarea             : incluye
+Contenido     "1"  --   "1"    TipoContenido     : clasificado por
+Alumno        "1"  --o  "0..*" Entrega           : realiza
+Tarea         "1"  --o  "0..*" Entrega           : recibe
+Entrega       "1"  --   "1"    EstadoEntrega     : tiene
+Entrega       "1"  --o  "1"    Calificacion      : genera
+Alumno        "1"  --o  "0..*" Calificacion      : obtiene
+Alumno        "1"  --o  "0..*" Recomendacion     : recibe
+Recomendacion "1"  --   "1"    TipoRecomendacion : clasificada por
+RecomendacionService ..> Calificacion  : consulta
+RecomendacionService ..> Entrega       : consulta
+RecomendacionService ..> Contenido     : consulta
+RecomendacionService ..> Recomendacion : genera
+EntregaService       ..> Entrega       : crea
+EntregaService       ..> Calificacion  : genera
+EntregaService       ..> Tarea         : verifica
+BatchLoaderJob       ..> Curso         : carga
+BatchLoaderJob       ..> Clase         : carga
+BatchLoaderJob       ..> Contenido     : carga
+
+@enduml

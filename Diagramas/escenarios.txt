@@ -1,0 +1,63 @@
+workspace {
+
+    model {
+        student = person "Alumno" "Consume contenido, entrega tareas y recibe recomendaciones"
+
+        lms = softwareSystem "Plataforma LMS" "Sistema de aprendizaje para curso de Estructuras de Datos" {
+
+            web         = container "Frontend Angular"         "Interfaz web del sistema"                                   "Angular"
+            api         = container "Backend API"              "Logica de negocio y servicios REST"                         "Spring Boot"
+            db          = container "Base de Datos"            "Persistencia de informacion academica"                      "PostgreSQL"
+            storage     = container "Storage"                  "Almacenamiento de recursos multimedia"                      "File Storage"
+            recommender = container "Motor de recomendaciones" "Sugiere proximos temas o refuerzos segun avance del alumno" "Spring Service"
+
+            ucLogin             = container "UC: Iniciar sesion"           "Alumno se autentica con usuario y contrasena"
+            ucVerCursos         = container "UC: Ver curso inscrito"       "Alumno consulta el curso de Estructuras de Datos en el que ya esta matriculado"
+            ucConsumirContenido = container "UC: Consumir contenido"       "Alumno accede a los recursos de una clase ya existente: video, PDF, HTML, imagen, URL, animacion, documento"
+            ucEntregarTarea     = container "UC: Entregar tarea"           "Alumno sube su trabajo. Sistema registra automaticamente si fue a tiempo, tarde o no entrego"
+            ucConsultarNotas    = container "UC: Consultar calificaciones" "Alumno revisa la nota que se asigna automaticamente al entregar la tarea"
+            ucVerRecomendacion  = container "UC: Ver recomendacion"        "Sistema sugiere siguiente clase o refuerzo segun nota obtenida y puntualidad de entrega"
+        }
+
+        student -> ucLogin             "Inicia sesion"
+        student -> ucVerCursos         "Consulta su curso"
+        student -> ucConsumirContenido "Accede al contenido de la clase"
+        student -> ucEntregarTarea     "Sube su trabajo"
+        student -> ucConsultarNotas    "Revisa su calificacion"
+        student -> ucVerRecomendacion  "Recibe sugerencia de siguiente tema o refuerzo"
+
+        ucLogin             -> api        "Autentica via JWT"
+        ucVerCursos         -> api        "GET /cursos/inscrito"
+        ucConsumirContenido -> api        "GET /clases/{id}/contenido"
+        ucConsumirContenido -> storage    "Descarga recurso multimedia"
+        ucEntregarTarea     -> api        "POST /entregas — nota se calcula automaticamente"
+        ucConsultarNotas    -> api        "GET /calificaciones"
+        ucVerRecomendacion  -> recommender "GET /recomendaciones/{alumnoId}"
+
+        ucVerCursos         -> ucConsumirContenido "include"
+        ucConsumirContenido -> ucEntregarTarea     "include"
+        ucEntregarTarea     -> ucConsultarNotas    "include: nota generada al entregar"
+        ucEntregarTarea     -> ucVerRecomendacion  "extend: dispara evaluacion de avance"
+        ucConsultarNotas    -> ucVerRecomendacion  "extend: nota actualiza recomendacion"
+
+        recommender -> db "Consulta notas, entregas y cobertura tematica"
+        api         -> db "Lee y escribe"
+        api         -> storage "Lee recursos"
+        api         -> recommender "Solicita recomendaciones"
+        web         -> api "Consume API REST"
+    }
+
+    views {
+        systemContext lms {
+            include *
+            autoLayout lr
+        }
+
+        container lms {
+            include *
+            autoLayout lr
+        }
+
+        theme default
+    }
+}
