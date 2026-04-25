@@ -1,0 +1,95 @@
+# =========================
+# Global
+# =========================
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.sw?
+
+# Environment files (keep templates tracked)
+.env
+.env.*
+!.env.example
+
+# VS Code and IDE metadata
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+*.iws
+*.iml
+*.ipr
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# =========================
+# Frontend (Angular / npm)
+# =========================
+
+# Dependencies and package manager caches
+frontend/node_modules/
+frontend/.npm/
+frontend/.pnpm-store/
+frontend/.yarn/
+
+# Build/cache outputs
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/.angular/
+frontend/.sass-cache/
+
+# Test and coverage
+frontend/coverage/
+frontend/.nyc_output/
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# =========================
+# Backend (Java / Maven)
+# =========================
+
+# Build output
+backend/target/
+backend/build/
+!backend/**/src/main/**/target/
+!backend/**/src/test/**/target/
+!backend/**/src/main/**/build/
+!backend/**/src/test/**/build/
+
+# Maven wrapper binary
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Spring Tool Suite / Eclipse metadata
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings
+backend/.springBeans
+backend/.sts4-cache
+
+# NetBeans metadata
+backend/nbproject/private/
+backend/nbbuild/
+backend/dist/
+backend/nbdist/
+backend/.nb-gradle/
+
+# IntelliJ metadata (backend scoped)
+backend/.idea/
