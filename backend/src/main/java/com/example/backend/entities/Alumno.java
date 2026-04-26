@@ -23,11 +23,10 @@ public class Alumno {
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String password;
-
     private Integer claseActual;
 
-    // Relaciones
+    // RELACIONES
+
     @OneToMany(mappedBy = "alumno")
     private List<Entrega> entregas;
 
@@ -36,4 +35,7 @@ public class Alumno {
 
     @OneToMany(mappedBy = "alumno")
     private List<Recomendacion> recomendaciones;
+
+    @OneToOne(mappedBy = "alumno")
+    private Inscripcion inscripcion;
 }
