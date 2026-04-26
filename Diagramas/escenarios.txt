@@ -1,12 +1,10 @@
 workspace {
 
     model {
-        alumno = person "Alumno" "Consume contenido, entrega tareas y revisa recomendaciones"
-        docente = person "Docente" "Publica contenido, crea tareas y califica entregas"
-        admin = person "Administrador" "Gestiona catalogo y operacion academica"
+        alumno = person "Alumno" "Consulta clases, consume contenido, entrega tareas y revisa recomendaciones"
 
         lms = softwareSystem "Plataforma LMS" "Sistema web para el curso de Estructuras de Datos" {
-            web = container "Frontend Web" "Interfaz para alumnos y docentes" "Angular"
+            web = container "Frontend Web" "Interfaz para el estudiante" "Angular"
             api = container "API LMS" "Logica de negocio y endpoints REST" "Spring Boot"
             rec = container "Servicio de Recomendaciones" "Sugiere siguiente clase o refuerzo" "Spring Service"
             batch = container "Carga Inicial" "Carga curso, clases y recursos" "Spring Batch"
@@ -15,8 +13,6 @@ workspace {
         }
 
         alumno -> web "Navega el curso y entrega tareas"
-        docente -> web "Administra contenido y calificaciones"
-        admin -> web "Supervisa configuracion academica"
 
         web -> api "REST/JSON"
         api -> db "CRUD de cursos, clases, tareas, entregas y notas"
@@ -30,11 +26,9 @@ workspace {
     views {
         systemContext lms "contexto" {
             include alumno
-            include docente
-            include admin
             include lms
             autoLayout lr
-            title "Contexto del sistema LMS"
+            title "Contexto del sistema LMS (enfoque estudiante)"
         }
 
         container lms "contenedores" {
@@ -44,7 +38,7 @@ workspace {
         }
 
         dynamic lms "escenario_alumno" {
-            title "Escenario principal: consumir contenido, entregar tarea y recibir recomendacion"
+            title "Escenario estudiante: consumir contenido, entregar tarea y recibir recomendacion"
             alumno -> web "1. Entra al curso"
             web -> api "2. Solicita clases y contenido"
             api -> db "3. Consulta progreso e historial"

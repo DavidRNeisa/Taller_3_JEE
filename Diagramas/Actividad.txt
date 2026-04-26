@@ -1,25 +1,17 @@
 @startuml
 title Diagrama de actividad — LMS
 
-|Usuario|
+|Alumno|
 start
 :Ingresar al LMS;
-:Digitar usuario y contraseña;
 :Seleccionar curso;
 :Consultar contenido;
 :Decidir entregar tarea?;
 
 |Sistema|
-:Validar credenciales;
+:Cargar panel principal del curso;
 
-if (¿Credenciales válidas?) then (sí)
-  :Mostrar panel principal;
-else (no)
-  :Mostrar mensaje de error;
-  stop
-endif
-
-|Usuario|
+|Alumno|
 if (¿Desea entregar tarea?) then (sí)
   :Adjuntar archivo o responder formulario;
   :Enviar entrega;
@@ -38,9 +30,9 @@ if (¿Entrega a tiempo?) then (sí)
   :Mostrar nota y recomendación;
 else (no)
   :Registrar entrega tardía;
-  :Aplicar regla de evaluación;
-  :Generar observación;
-  :Mostrar resultado;
+  :Aplicar regla de evaluación (penalización);
+  :Generar recomendación de refuerzo;
+  :Mostrar nota, observación y recomendación;
 endif
 
 stop
