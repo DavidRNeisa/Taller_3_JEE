@@ -1,0 +1,110 @@
+<main class="lesson-viewer-page">
+  <!-- Header con navegación -->
+  <header class="page-header">
+    <a [routerLink]="['/courses', courseId]" class="back-btn">
+      ← Volver al curso
+    </a>
+    <h1 *ngIf="course" class="course-title">{{ course.title }}</h1>
+  </header>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-state">
+    <p>Cargando lección...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-state">
+    <p class="error-message">⚠️ {{ error }}</p>
+    <a [routerLink]="['/courses', courseId]" class="btn btn-primary">
+      Volver al curso
+    </a>
+  </div>
+
+  <!-- Lesson content -->
+  <ng-container *ngIf="lesson && !loading && !error">
+    <!-- Lesson header -->
+    <section class="lesson-header">
+      <div class="lesson-meta">
+        <span class="lesson-number">Lección {{ currentLessonIndex + 1 }} de {{ lessons.length }}</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="progressPercentage"></div>
+          </div>
+          <span class="progress-text">{{ progressPercentage }}%</span>
+        </div>
+      </div>
+      <h1 class="lesson-title">{{ lesson.title }}</h1>
+      <p *ngIf="lesson.description" class="lesson-description">
+        {{ lesson.description }}
+      </p>
+    </section>
+
+    <!-- Resources -->
+    <section class="resources-section">
+      <div class="resources-container">
+        <ng-container
+          *ngFor="let resource of lesson.resources; let i = index"
+        >
+          <article class="resource-article">
+            <div class="resource-badge">
+              Recurso {{ i + 1 }} de {{ lesson.resources.length }}
+            </div>
+            <app-resource-viewer [resource]="resource"></app-resource-viewer>
+          </article>
+        </ng-container>
+
+        <!-- No resources state -->
+        <ng-container *ngIf="lesson.resources.length === 0">
+          <div class="empty-resources">
+            <p>📭 No hay recursos disponibles para esta lección</p>
+          </div>
+        </ng-container>
+      </div>
+    </section>
+
+    <!-- Lesson metadata -->
+    <section class="lesson-metadata">
+      <div class="metadata-grid">
+        <div *ngIf="lesson.completed" class="metadata-item completed">
+          <span class="metadata-label">✓ Estado</span>
+          <span class="metadata-value">Completada</span>
+        </div>
+        <div *ngIf="!lesson.completed" class="metadata-item">
+          <span class="metadata-label">○ Estado</span>
+          <span class="metadata-value">En progreso</span>
+        </div>
+
+        <div *ngIf="lesson.hasAssignments" class="metadata-item has-assignments">
+          <span class="metadata-label">📋 Tarea</span>
+          <span class="metadata-value">Disponible</span>
+        </div>
+
+        <div class="metadata-item">
+          <span class="metadata-label">📊 Progreso</span>
+          <span class="metadata-value">{{ lesson.progress }}%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="lesson-navigation">
+      <button
+        *ngIf="hasPreviousLesson"
+        (click)="goToPreviousLesson()"
+        class="nav-btn nav-prev"
+      >
+        ← Lección anterior
+      </button>
+      <div class="nav-info">
+        Lección {{ currentLessonIndex + 1 }} de {{ lessons.length }}
+      </div>
+      <button
+        *ngIf="hasNextLesson"
+        (click)="goToNextLesson()"
+        class="nav-btn nav-next"
+      >
+        Siguiente lección →
+      </button>
+    </nav>
+  </ng-container>
+</main>

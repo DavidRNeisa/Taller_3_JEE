@@ -39,11 +39,11 @@
       <div class="lesson-resources" *ngIf="lesson.resources && lesson.resources.length > 0">
         <p class="resources-label">Contenidos:</p>
         <div class="resources-list">
-          <a *ngFor="let resource of lesson.resources" href="#" class="resource-item" [title]="resource.title">
+          <div *ngFor="let resource of lesson.resources" class="resource-item" [title]="resource.title">
             <span class="resource-icon">{{ getContentIcon(resource.type) }}</span>
             <span class="resource-type">{{ resource.type }}</span>
             <span class="resource-title">{{ resource.title }}</span>
-          </a>
+          </div>
         </div>
       </div>
 
@@ -57,7 +57,7 @@
         </div>
 
         <div class="lesson-actions">
-          <button class="btn-primary">Ver contenido</button>
+          <a [routerLink]="['/courses', courseId, 'lessons', lesson.id]" class="btn-primary">Ver contenido →</a>
           <button *ngIf="lesson.hasAssignments" class="btn-secondary">Ver tarea</button>
         </div>
       </div>

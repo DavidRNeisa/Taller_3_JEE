@@ -1,0 +1,107 @@
+<div class="resource-viewer">
+  <!-- Header con tipo y título -->
+  <div class="resource-header">
+    <span class="resource-icon">{{ getIcon(resource.type) }}</span>
+    <div class="resource-info">
+      <p class="resource-type">{{ getContentTypeLabel(resource.type) }}</p>
+      <h2 class="resource-title">{{ resource.title }}</h2>
+    </div>
+  </div>
+
+  <!-- Contenedor principal del recurso -->
+  <div class="resource-content">
+    <!-- Video de YouTube -->
+    <ng-container *ngIf="isVideo(resource.type) && resource.url">
+      <div class="video-container">
+        <iframe
+          [src]="getYouTubeEmbedUrl(resource.url) | sanitize"
+          allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </ng-container>
+
+    <!-- Imagen -->
+    <ng-container *ngIf="isImage(resource.type) && resource.url">
+      <div class="image-container">
+        <img [src]="resource.url" [alt]="resource.title" class="resource-image" />
+      </div>
+    </ng-container>
+
+    <!-- PDF -->
+    <ng-container *ngIf="isPDF(resource.type) && resource.url">
+      <div class="pdf-container">
+        <div class="pdf-viewer">
+          <p class="pdf-info">
+            📑 PDF: <strong>{{ resource.title }}</strong>
+          </p>
+          <a [href]="resource.url" target="_blank" class="btn btn-primary">
+            Descargar / Ver PDF ↓
+          </a>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Documento (Word, Excel, etc) -->
+    <ng-container *ngIf="isDocument(resource.type) && resource.url">
+      <div class="document-container">
+        <div class="document-viewer">
+          <p class="doc-info">
+            📄 Documento: <strong>{{ resource.title }}</strong>
+          </p>
+          <a [href]="resource.url" target="_blank" class="btn btn-primary">
+            Descargar Documento ↓
+          </a>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Presentación -->
+    <ng-container *ngIf="isPresentation(resource.type) && resource.url">
+      <div class="presentation-container">
+        <div class="presentation-viewer">
+          <p class="pres-info">
+            📊 Presentación: <strong>{{ resource.title }}</strong>
+          </p>
+          <a [href]="resource.url" target="_blank" class="btn btn-primary">
+            Ver Presentación ↓
+          </a>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Enlace externo -->
+    <ng-container *ngIf="isLink(resource.type) && resource.url">
+      <div class="link-container">
+        <div class="link-card">
+          <p class="link-label">🔗 Enlace externo</p>
+          <p class="link-url">{{ resource.url }}</p>
+          <a [href]="resource.url" target="_blank" class="btn btn-secondary">
+            Abrir enlace ↗
+          </a>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Contenido HTML -->
+    <ng-container *ngIf="isHTML(resource.type) && resource.url">
+      <div class="html-container">
+        <iframe
+          [src]="resource.url | sanitize"
+          class="html-frame"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+        ></iframe>
+      </div>
+    </ng-container>
+
+    <!-- Fallback si no hay URL -->
+    <ng-container *ngIf="!resource.url">
+      <div class="empty-state">
+        <p class="empty-message">
+          No hay contenido disponible para este recurso
+        </p>
+      </div>
+    </ng-container>
+  </div>
+</div>
