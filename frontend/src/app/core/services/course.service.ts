@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Course } from '../../models/course.model';
 import { Lesson } from '../../models/lesson.model';
+import { Assignment } from '../../models/assignment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -78,5 +79,84 @@ export class CourseService {
     }
 
     return of(mockLessons);
+  }
+
+  getAssignmentsByCourse(courseId: number): Observable<Assignment[]> {
+    // Mock data - tareas con diferentes estados
+    const mockAssignments: Assignment[] = [
+      {
+        id: 1,
+        lessonId: 1,
+        courseId,
+        title: 'Implementar una Lista Simple',
+        description: 'Crea una clase que represente una lista enlazada con métodos básicos de inserción y eliminación',
+        dueDate: new Date(Date.now() - 2 * 86400000).toISOString(), // 2 días atrás
+        submittedDate: new Date(Date.now() - 1 * 86400000).toISOString(),
+        deliveryStatus: 'LATE',
+        grade: 85,
+        feedback: 'Buen trabajo, pero faltó documentación en el código',
+        fileUrl: '/submissions/lista-simple.zip'
+      },
+      {
+        id: 2,
+        lessonId: 2,
+        courseId,
+        title: 'Dibujar Nodos y Enlaces',
+        description: 'Realiza un diagrama que muestre cómo funcionan los nodos y sus enlaces en una lista',
+        dueDate: new Date(Date.now() - 5 * 86400000).toISOString(),
+        submittedDate: new Date(Date.now() - 5.5 * 86400000).toISOString(),
+        deliveryStatus: 'SUBMITTED',
+        grade: 92,
+        feedback: 'Excelente diagrama, muy claro y detallado',
+        fileUrl: '/submissions/diagrama-nodos.pdf'
+      },
+      {
+        id: 3,
+        lessonId: 3,
+        courseId,
+        title: 'Algoritmo de Inserción',
+        description: 'Escribe el pseudocódigo para insertar un elemento en una posición específica',
+        dueDate: new Date(Date.now() + 2 * 86400000).toISOString(), // En 2 días
+        deliveryStatus: 'PENDING'
+      },
+      {
+        id: 4,
+        lessonId: 4,
+        courseId,
+        title: 'Práctica de Eliminación',
+        description: 'Implementa la función de eliminación y pruébala con múltiples casos',
+        dueDate: new Date(Date.now() + 5 * 86400000).toISOString(),
+        deliveryStatus: 'PENDING'
+      },
+      {
+        id: 5,
+        lessonId: 5,
+        courseId,
+        title: 'Búsqueda Binaria',
+        description: 'Implementa búsqueda binaria en una lista ordenada',
+        dueDate: new Date(Date.now() - 10 * 86400000).toISOString(),
+        deliveryStatus: 'NOT_SUBMITTED'
+      },
+      {
+        id: 6,
+        lessonId: 6,
+        courseId,
+        title: 'Análisis de Complejidad',
+        description: 'Analiza la complejidad temporal de las operaciones básicas',
+        dueDate: new Date(Date.now() + 1 * 86400000).toISOString(), // Mañana
+        deliveryStatus: 'PENDING'
+      },
+      {
+        id: 7,
+        lessonId: 7,
+        courseId,
+        title: 'Proyecto Integrador',
+        description: 'Crea una aplicación que use listas para resolver un problema real',
+        dueDate: new Date(Date.now() + 10 * 86400000).toISOString(),
+        deliveryStatus: 'PENDING'
+      },
+    ];
+
+    return of(mockAssignments);
   }
 }

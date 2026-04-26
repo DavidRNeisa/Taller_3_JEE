@@ -1,0 +1,197 @@
+<main class="assignment-page">
+  <!-- Header -->
+  <header class="page-header">
+    <a [routerLink]="['/courses', courseId]" class="back-btn">
+      ← Volver al curso
+    </a>
+    <h1 *ngIf="course" class="course-title">{{ course.title }}</h1>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <p>Cargando tareas...</p>
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="!loading">
+    <!-- Empty State -->
+    <ng-container *ngIf="assignments.length === 0">
+      <section class="empty-state">
+        <p class="empty-icon">📭</p>
+        <p class="empty-message">No hay tareas en este curso</p>
+      </section>
+    </ng-container>
+
+    <!-- Summary Stats -->
+    <ng-container *ngIf="assignments.length > 0">
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-number">{{ assignments.length }}</span>
+            <span class="stat-label">Total de Tareas</span>
+          </div>
+          <div class="stat-card submitted">
+            <span class="stat-number">{{ assignmentsSubmitted.length }}</span>
+            <span class="stat-label">Entregadas</span>
+          </div>
+          <div class="stat-card pending">
+            <span class="stat-number">{{ assignmentsPending.length }}</span>
+            <span class="stat-label">Pendientes</span>
+          </div>
+          <div class="stat-card overdue">
+            <span class="stat-number">{{ assignmentsLate.length + assignmentsNotSubmitted.length }}</span>
+            <span class="stat-label">Vencidas/No Entregadas</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Assignments by Status -->
+      <section class="assignments-section">
+        <!-- Pending Assignments -->
+        <ng-container *ngIf="assignmentsPending.length > 0">
+          <div class="assignment-group">
+            <h2 class="group-title">📋 Tareas Pendientes</h2>
+            <div class="assignments-list">
+              <article
+                *ngFor="let assignment of assignmentsPending"
+                class="assignment-card"
+                [class.due-soon]="isDueSoon(assignment.dueDate)"
+              >
+                <div class="assignment-header">
+                  <h3 class="assignment-title">{{ assignment.title }}</h3>
+                  <span class="due-badge" [class.critical]="isOverdue(assignment.dueDate)">
+                    {{ isOverdue(assignment.dueDate) ? '⏰ VENCIDA' : '⏰ Vence en ' + getDaysUntilDue(assignment.dueDate) + ' días' }}
+                  </span>
+                </div>
+                <p *ngIf="assignment.description" class="assignment-description">
+                  {{ assignment.description }}
+                </p>
+                <div class="assignment-metadata">
+                  <span class="meta-item">
+                    <span class="meta-label">📅 Fecha Límite:</span>
+                    <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
+                  </span>
+                </div>
+                <div class="assignment-actions">
+                  <button class="btn btn-primary">Enviar Tarea</button>
+                  <a [routerLink]="['/courses', courseId, 'lessons', assignment.lessonId]" class="btn btn-secondary">
+                    Ver Lección
+                  </a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Submitted Assignments -->
+        <ng-container *ngIf="assignmentsSubmitted.length > 0">
+          <div class="assignment-group">
+            <h2 class="group-title">✓ Tareas Entregadas a Tiempo</h2>
+            <div class="assignments-list">
+              <article *ngFor="let assignment of assignmentsSubmitted" class="assignment-card submitted">
+                <div class="assignment-header">
+                  <h3 class="assignment-title">{{ assignment.title }}</h3>
+                  <span class="status-badge status-submitted">✓ Entregada</span>
+                </div>
+                <p *ngIf="assignment.description" class="assignment-description">
+                  {{ assignment.description }}
+                </p>
+                <div class="assignment-metadata">
+                  <span class="meta-item">
+                    <span class="meta-label">📅 Fecha Límite:</span>
+                    <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
+                  </span>
+                  <span *ngIf="assignment.submittedDate" class="meta-item">
+                    <span class="meta-label">📤 Entregada:</span>
+                    <span class="meta-value">{{ formatDate(assignment.submittedDate) }}</span>
+                  </span>
+                </div>
+                <div *ngIf="assignment.grade !== undefined" class="assignment-grade">
+                  <span class="grade-label">Calificación:</span>
+                  <span class="grade-value" [ngClass]="'grade-' + (assignment.grade >= 60 ? 'pass' : 'fail')">
+                    {{ assignment.grade }}/100
+                  </span>
+                </div>
+                <p *ngIf="assignment.feedback" class="assignment-feedback">
+                  <strong>Retroalimentación:</strong> {{ assignment.feedback }}
+                </p>
+                <div class="assignment-actions">
+                  <a [routerLink]="['/courses', courseId, 'lessons', assignment.lessonId]" class="btn btn-secondary">
+                    Ver Lección
+                  </a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Late Assignments -->
+        <ng-container *ngIf="assignmentsLate.length > 0">
+          <div class="assignment-group">
+            <h2 class="group-title">⚠ Tareas Entregadas Tarde</h2>
+            <div class="assignments-list">
+              <article *ngFor="let assignment of assignmentsLate" class="assignment-card late">
+                <div class="assignment-header">
+                  <h3 class="assignment-title">{{ assignment.title }}</h3>
+                  <span class="status-badge status-late">⚠ Entregada Tarde</span>
+                </div>
+                <p *ngIf="assignment.description" class="assignment-description">
+                  {{ assignment.description }}
+                </p>
+                <div class="assignment-metadata">
+                  <span class="meta-item">
+                    <span class="meta-label">📅 Fecha Límite:</span>
+                    <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
+                  </span>
+                  <span *ngIf="assignment.submittedDate" class="meta-item">
+                    <span class="meta-label">📤 Entregada:</span>
+                    <span class="meta-value">{{ formatDate(assignment.submittedDate) }}</span>
+                  </span>
+                </div>
+                <div *ngIf="assignment.grade !== undefined" class="assignment-grade">
+                  <span class="grade-label">Calificación:</span>
+                  <span class="grade-value" [ngClass]="'grade-' + (assignment.grade >= 60 ? 'pass' : 'fail')">
+                    {{ assignment.grade }}/100
+                  </span>
+                </div>
+                <p *ngIf="assignment.feedback" class="assignment-feedback">
+                  <strong>Retroalimentación:</strong> {{ assignment.feedback }}
+                </p>
+              </article>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Not Submitted Assignments -->
+        <ng-container *ngIf="assignmentsNotSubmitted.length > 0">
+          <div class="assignment-group">
+            <h2 class="group-title">✗ Tareas No Entregadas</h2>
+            <div class="assignments-list">
+              <article *ngFor="let assignment of assignmentsNotSubmitted" class="assignment-card not-submitted">
+                <div class="assignment-header">
+                  <h3 class="assignment-title">{{ assignment.title }}</h3>
+                  <span class="status-badge status-not-submitted">✗ No Entregada</span>
+                </div>
+                <p *ngIf="assignment.description" class="assignment-description">
+                  {{ assignment.description }}
+                </p>
+                <div class="assignment-metadata">
+                  <span class="meta-item">
+                    <span class="meta-label">📅 Fecha Límite:</span>
+                    <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
+                  </span>
+                </div>
+                <div class="assignment-actions">
+                  <button class="btn btn-primary">Enviar Tarea</button>
+                  <a [routerLink]="['/courses', courseId, 'lessons', assignment.lessonId]" class="btn btn-secondary">
+                    Ver Lección
+                  </a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </ng-container>
+      </section>
+    </ng-container>
+  </ng-container>
+</main>

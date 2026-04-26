@@ -65,6 +65,30 @@
   color: #0f766e;
 }
 
+.header-actions {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #d1c9bd;
+}
+
+.btn-action {
+  display: inline-block;
+  padding: 0.7rem 1.2rem;
+  background: #0f766e;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 200ms ease;
+}
+
+.btn-action:hover {
+  background: #0b5f59;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+  transform: translateY(-1px);
+}
+
 .loading {
   max-width: 1200px;
   margin: 0 auto;

@@ -14,6 +14,11 @@
           <span class="value">{{ course.progress }}%</span>
         </div>
       </div>
+      <div class="header-actions">
+        <a [routerLink]="['/courses', courseId, 'assignments']" class="btn-action">
+          📋 Ver Tareas
+        </a>
+      </div>
     </div>
   </header>
 
