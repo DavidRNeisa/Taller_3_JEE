@@ -1,5 +1,14 @@
 package com.example.backend.enums;
 
-public class TipoContenido {
-    
+public enum TipoContenido {
+
+    VIDEO,
+    PDF,
+    HTML,
+    WORD,
+    EXCEL,
+    PPTX,
+    IMAGEN,
+    URL,
+    ANIMACION
 }

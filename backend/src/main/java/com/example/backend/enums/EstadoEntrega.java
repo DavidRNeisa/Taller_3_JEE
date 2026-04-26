@@ -1,5 +1,8 @@
 package com.example.backend.enums;
 
-public class EstadoEntrega {
-    
+public enum EstadoEntrega {
+
+    A_TIEMPO,
+    TARDE,
+    NO_ENTREGO
 }

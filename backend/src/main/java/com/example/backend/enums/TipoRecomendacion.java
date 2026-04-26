@@ -1,5 +1,7 @@
 package com.example.backend.enums;
 
-public class TipoRecomendacion {
-    
+public enum TipoRecomendacion {
+
+    SIGUIENTE_CLASE,
+    REFUERZO
 }
