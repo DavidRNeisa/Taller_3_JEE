@@ -4,12 +4,14 @@ import { CourseListComponent } from './features/courses/pages/course-list/course
 import { CourseDetailComponent } from './features/courses/pages/course-detail/course-detail.component';
 import { LessonViewerComponent } from './features/courses/pages/lesson-viewer/lesson-viewer.component';
 import { AssignmentListComponent } from './features/courses/pages/assignment-list/assignment-list.component';
+import { SubmissionFormComponent } from './features/assignments/pages/submission-form/submission-form.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'courses', component: CourseListComponent },
   { path: 'courses/:courseId/lessons/:lessonId', component: LessonViewerComponent },
   { path: 'courses/:courseId/assignments', component: AssignmentListComponent },
+  { path: 'courses/:courseId/assignments/:assignmentId/submit', component: SubmissionFormComponent },
   { path: 'courses/:id', component: CourseDetailComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: 'home' }

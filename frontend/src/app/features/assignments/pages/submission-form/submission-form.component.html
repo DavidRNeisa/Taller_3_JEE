@@ -1,0 +1,66 @@
+<main class="submission-page">
+	<header class="page-header">
+		<a [routerLink]="['/courses', courseId, 'assignments']" class="back-btn">← Volver a tareas</a>
+		<h1>Formulario de Entrega</h1>
+	</header>
+
+	<section *ngIf="loading" class="state-card">
+		<p>Cargando tarea...</p>
+	</section>
+
+	<section *ngIf="!loading && errorMessage" class="state-card error">
+		<p>{{ errorMessage }}</p>
+		<button type="button" class="btn btn-secondary" (click)="backToAssignments()">Volver</button>
+	</section>
+
+	<section *ngIf="assignment && !loading && !submitSuccess" class="form-card">
+		<div class="assignment-info">
+			<h2>{{ assignment.title }}</h2>
+			<p class="description">{{ assignment.description }}</p>
+			<p class="due-date">
+				<strong>Fecha limite:</strong> {{ formattedDueDate }}
+			</p>
+		</div>
+
+		<form (ngSubmit)="submitWork()" class="submission-form">
+			<label for="fileInput" class="label">Archivo de entrega</label>
+			<input
+				id="fileInput"
+				type="file"
+				class="file-input"
+				accept=".pdf,.doc,.docx,.zip,.rar,.txt"
+				(change)="onFileSelected($event)"
+			/>
+
+			<p class="helper-text">Formatos permitidos: PDF, DOC, DOCX, ZIP, RAR, TXT. Maximo 10 MB.</p>
+
+			<p *ngIf="selectedFile" class="selected-file">
+				Archivo seleccionado: <strong>{{ selectedFile.name }}</strong>
+			</p>
+
+			<label for="comment" class="label">Comentario (opcional)</label>
+			<textarea
+				id="comment"
+				name="comment"
+				rows="4"
+				[(ngModel)]="comment"
+				placeholder="Agrega una nota para el docente..."
+			></textarea>
+
+			<p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+			<div class="actions">
+				<button type="button" class="btn btn-secondary" (click)="backToAssignments()">Cancelar</button>
+				<button type="submit" class="btn btn-primary" [disabled]="!canSubmit">
+					{{ submitting ? 'Enviando...' : 'Enviar trabajo' }}
+				</button>
+			</div>
+		</form>
+	</section>
+
+	<section *ngIf="submitSuccess" class="state-card success">
+		<h2>Entrega enviada</h2>
+		<p>Tu trabajo se subio correctamente.</p>
+		<a [routerLink]="['/courses', courseId, 'assignments']" class="btn btn-primary">Volver al listado</a>
+	</section>
+</main>

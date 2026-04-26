@@ -1,0 +1,152 @@
+.submission-page {
+	min-height: 100vh;
+	padding: 2rem 1.25rem;
+	background: linear-gradient(135deg, #f5f1e8 0%, #e8f4f8 100%);
+	font-family: "Segoe UI", "Noto Sans", sans-serif;
+}
+
+.page-header,
+.form-card,
+.state-card {
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.page-header {
+	margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+	margin: 0.8rem 0 0;
+	color: #1b1f24;
+	font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.back-btn {
+	display: inline-block;
+	padding: 0.5rem 1rem;
+	background: #ffffff;
+	border: 1px solid #d1c9bd;
+	border-radius: 8px;
+	text-decoration: none;
+	color: #0f766e;
+	font-weight: 600;
+}
+
+.form-card,
+.state-card {
+	background: #ffffff;
+	border: 1px solid #d1c9bd;
+	border-radius: 12px;
+	padding: 1.5rem;
+	box-shadow: 0 4px 12px rgba(35, 38, 42, 0.06);
+}
+
+.assignment-info h2 {
+	margin: 0 0 0.5rem;
+	color: #1b1f24;
+}
+
+.description {
+	margin: 0 0 0.8rem;
+	color: #4b5563;
+	line-height: 1.5;
+}
+
+.due-date {
+	margin: 0 0 1.2rem;
+	color: #0e7490;
+}
+
+.submission-form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.8rem;
+}
+
+.label {
+	font-weight: 700;
+	color: #1b1f24;
+}
+
+.file-input,
+textarea {
+	width: 100%;
+	padding: 0.7rem;
+	border: 1px solid #d1c9bd;
+	border-radius: 8px;
+	font: inherit;
+}
+
+textarea {
+	resize: vertical;
+}
+
+.helper-text,
+.selected-file {
+	margin: 0;
+	font-size: 0.9rem;
+	color: #6b7280;
+}
+
+.error-message {
+	margin: 0;
+	color: #dc2626;
+	font-weight: 600;
+}
+
+.actions {
+	display: flex;
+	gap: 0.8rem;
+	justify-content: flex-end;
+	margin-top: 0.5rem;
+}
+
+.btn {
+	border: none;
+	border-radius: 8px;
+	padding: 0.6rem 1rem;
+	font-weight: 700;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.btn-primary {
+	background: #0f766e;
+	color: #ffffff;
+}
+
+.btn-primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.btn-secondary {
+	background: #ecfeff;
+	color: #0e7490;
+	border: 1px solid #06b6d4;
+}
+
+.state-card.error {
+	border-color: #fecaca;
+	color: #991b1b;
+}
+
+.state-card.success {
+	border-color: #86efac;
+}
+
+@media (max-width: 768px) {
+	.submission-page {
+		padding: 1rem;
+	}
+
+	.actions {
+		flex-direction: column;
+	}
+
+	.btn {
+		width: 100%;
+		text-align: center;
+	}
+}

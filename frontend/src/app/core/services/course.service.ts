@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Course } from '../../models/course.model';
 import { Lesson } from '../../models/lesson.model';
 import { Assignment } from '../../models/assignment.model';
@@ -158,5 +159,17 @@ export class CourseService {
     ];
 
     return of(mockAssignments);
+  }
+
+  getAssignmentById(courseId: number, assignmentId: number): Observable<Assignment> {
+    return this.getAssignmentsByCourse(courseId).pipe(
+      map((assignments) => {
+        const assignment = assignments.find((item) => item.id === assignmentId);
+        if (!assignment) {
+          throw new Error('Assignment not found');
+        }
+        return assignment;
+      })
+    );
   }
 }
