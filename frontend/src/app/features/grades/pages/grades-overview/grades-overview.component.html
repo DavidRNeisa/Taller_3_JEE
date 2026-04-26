@@ -1,0 +1,74 @@
+<main class="grades-page">
+	<header class="page-header">
+		<a [routerLink]="['/courses', courseId]" class="back-btn">← Volver al curso</a>
+		<h1>Calificaciones</h1>
+		<p *ngIf="course" class="course-title">{{ course.title }}</p>
+	</header>
+
+	<section *ngIf="loading" class="state-card">
+		<p>Cargando notas de evaluaciones...</p>
+	</section>
+
+	<section *ngIf="!loading && error" class="state-card error">
+		<p>{{ error }}</p>
+	</section>
+
+	<ng-container *ngIf="!loading && !error">
+		<section class="summary-grid">
+			<article class="summary-card">
+				<p class="label">Promedio</p>
+				<p class="value">{{ averageScore }}/100</p>
+			</article>
+			<article class="summary-card">
+				<p class="label">Evaluaciones calificadas</p>
+				<p class="value">{{ gradedItems.length }}</p>
+			</article>
+			<article class="summary-card">
+				<p class="label">Pendientes de revision</p>
+				<p class="value">{{ pendingReviewItems.length }}</p>
+			</article>
+			<article class="summary-card">
+				<p class="label">Total evaluaciones</p>
+				<p class="value">{{ grades.length }}</p>
+			</article>
+		</section>
+
+		<section *ngIf="grades.length === 0" class="state-card">
+			<p>No hay evaluaciones registradas para este curso.</p>
+		</section>
+
+		<section *ngIf="grades.length > 0" class="table-card">
+			<table>
+				<thead>
+					<tr>
+						<th>Evaluacion</th>
+						<th>Leccion</th>
+						<th>Fecha limite</th>
+						<th>Entrega</th>
+						<th>Nota</th>
+						<th>Estado</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let item of grades">
+						<td>{{ item.assignmentTitle }}</td>
+						<td>{{ item.lessonId }}</td>
+						<td>{{ formatDate(item.dueDate) }}</td>
+						<td>{{ formatDate(item.submittedDate) }}</td>
+						<td>
+							<span *ngIf="item.score !== undefined" [class]="(item.score >= 60 ? 'score-pass' : 'score-fail')">
+								{{ item.score }}/100
+							</span>
+							<span *ngIf="item.score === undefined">-</span>
+						</td>
+						<td>
+							<span class="status-pill" [ngClass]="getStatusClass(item.status)">
+								{{ getStatusLabel(item.status) }}
+							</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+	</ng-container>
+</main>

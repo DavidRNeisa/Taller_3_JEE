@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { Course } from '../../models/course.model';
 import { Lesson } from '../../models/lesson.model';
 import { Assignment } from '../../models/assignment.model';
+import { Grade } from '../../models/grade.model';
 
 @Injectable({
   providedIn: 'root'
@@ -170,6 +171,32 @@ export class CourseService {
         }
         return assignment;
       })
+    );
+  }
+
+  getGradesByCourse(courseId: number): Observable<Grade[]> {
+    return this.getAssignmentsByCourse(courseId).pipe(
+      map((assignments) => assignments.map((assignment) => {
+        let status: Grade['status'] = 'NOT_DELIVERED';
+
+        if (assignment.grade !== undefined) {
+          status = 'GRADED';
+        } else if (assignment.deliveryStatus === 'SUBMITTED' || assignment.deliveryStatus === 'LATE') {
+          status = 'PENDING_REVIEW';
+        }
+
+        return {
+          assignmentId: assignment.id,
+          courseId,
+          lessonId: assignment.lessonId,
+          assignmentTitle: assignment.title,
+          dueDate: assignment.dueDate,
+          submittedDate: assignment.submittedDate,
+          score: assignment.grade,
+          feedback: assignment.feedback,
+          status
+        };
+      }))
     );
   }
 }
