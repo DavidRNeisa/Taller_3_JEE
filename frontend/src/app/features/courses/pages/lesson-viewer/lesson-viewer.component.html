@@ -84,6 +84,16 @@
           <span class="metadata-value">{{ lesson.progress }}%</span>
         </div>
       </div>
+
+      <div *ngIf="lesson.hasAssignments" class="lesson-assignment-link">
+        <a
+          [routerLink]="['/courses', courseId, 'assignments']"
+          [queryParams]="{ lessonId: lesson.id }"
+          class="btn btn-primary"
+        >
+          Ver tareas de esta lección
+        </a>
+      </div>
     </section>
 
     <!-- Navigation -->

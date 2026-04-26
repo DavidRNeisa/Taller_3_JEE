@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CourseService } from '../../../../core/services/course.service';
 import { Course } from '../../../../models/course.model';
 import { Assignment } from '../../../../models/assignment.model';
+import { Lesson } from '../../../../models/lesson.model';
 
 @Component({
   selector: 'app-assignment-list',
@@ -15,6 +16,8 @@ import { Assignment } from '../../../../models/assignment.model';
 export class AssignmentListComponent implements OnInit {
   course: Course | null = null;
   assignments: Assignment[] = [];
+  lessonsById: Record<number, Lesson> = {};
+  selectedLessonId: number | null = null;
   loading: boolean = true;
   courseId: number = 0;
 
@@ -26,6 +29,8 @@ export class AssignmentListComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.courseId = +params['courseId'];
+      const lessonIdParam = this.route.snapshot.queryParamMap.get('lessonId');
+      this.selectedLessonId = lessonIdParam ? Number(lessonIdParam) : null;
       this.loadAssignments();
     });
   }
@@ -37,6 +42,15 @@ export class AssignmentListComponent implements OnInit {
     this.courseService.getCourseById(this.courseId).subscribe({
       next: (course: Course) => {
         this.course = course;
+
+        this.courseService.getLessonsByCourse(this.courseId).subscribe({
+          next: (lessons: Lesson[]) => {
+            this.lessonsById = lessons.reduce<Record<number, Lesson>>((acc, lesson) => {
+              acc[lesson.id] = lesson;
+              return acc;
+            }, {});
+          },
+        });
 
         // Load assignments
         this.courseService.getAssignmentsByCourse(this.courseId).subscribe({
@@ -113,8 +127,23 @@ export class AssignmentListComponent implements OnInit {
     return Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   }
 
+  getLessonTitle(lessonId: number): string {
+    return this.lessonsById[lessonId]?.title || `Lección ${lessonId}`;
+  }
+
+  clearLessonFilter(): void {
+    this.selectedLessonId = null;
+  }
+
+  get assignmentsToDisplay(): Assignment[] {
+    if (!this.selectedLessonId) {
+      return this.assignments;
+    }
+    return this.assignments.filter((assignment) => assignment.lessonId === this.selectedLessonId);
+  }
+
   filterByStatus(status: string): Assignment[] {
-    return this.assignments.filter((a) => a.deliveryStatus === status);
+    return this.assignmentsToDisplay.filter((a) => a.deliveryStatus === status);
   }
 
   get assignmentsSubmitted(): Assignment[] {

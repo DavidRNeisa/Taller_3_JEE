@@ -63,7 +63,14 @@
 
         <div class="lesson-actions">
           <a [routerLink]="['/courses', courseId, 'lessons', lesson.id]" class="btn-primary">Ver contenido →</a>
-          <button *ngIf="lesson.hasAssignments" class="btn-secondary">Ver tarea</button>
+          <a
+            *ngIf="lesson.hasAssignments"
+            [routerLink]="['/courses', courseId, 'assignments']"
+            [queryParams]="{ lessonId: lesson.id }"
+            class="btn-secondary"
+          >
+            Ver tarea
+          </a>
         </div>
       </div>
 

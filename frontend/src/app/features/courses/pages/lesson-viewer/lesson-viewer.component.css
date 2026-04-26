@@ -246,6 +246,12 @@
   color: #1b1f24;
 }
 
+.lesson-assignment-link {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5dfd0;
+}
+
 /* Lesson Navigation */
 .lesson-navigation {
   max-width: 1200px;

@@ -5,6 +5,10 @@
       ← Volver al curso
     </a>
     <h1 *ngIf="course" class="course-title">{{ course.title }}</h1>
+    <p *ngIf="selectedLessonId" class="empty-message">
+      Mostrando tareas de: <strong>{{ getLessonTitle(selectedLessonId) }}</strong>
+      <a [routerLink]="['/courses', courseId, 'assignments']" class="back-btn">Ver todas</a>
+    </p>
   </header>
 
   <!-- Loading State -->
@@ -15,19 +19,24 @@
   <!-- Content -->
   <ng-container *ngIf="!loading">
     <!-- Empty State -->
-    <ng-container *ngIf="assignments.length === 0">
+    <ng-container *ngIf="assignmentsToDisplay.length === 0">
       <section class="empty-state">
         <p class="empty-icon">📭</p>
-        <p class="empty-message">No hay tareas en este curso</p>
+        <p class="empty-message">
+          {{ selectedLessonId ? 'No hay tareas asociadas a esta lección' : 'No hay tareas en este curso' }}
+        </p>
+        <button *ngIf="selectedLessonId" class="btn btn-secondary" (click)="clearLessonFilter()">
+          Ver todas las tareas del curso
+        </button>
       </section>
     </ng-container>
 
     <!-- Summary Stats -->
-    <ng-container *ngIf="assignments.length > 0">
+    <ng-container *ngIf="assignmentsToDisplay.length > 0">
       <section class="stats-section">
         <div class="stats-grid">
           <div class="stat-card">
-            <span class="stat-number">{{ assignments.length }}</span>
+            <span class="stat-number">{{ assignmentsToDisplay.length }}</span>
             <span class="stat-label">Total de Tareas</span>
           </div>
           <div class="stat-card submitted">
@@ -68,6 +77,10 @@
                 </p>
                 <div class="assignment-metadata">
                   <span class="meta-item">
+                    <span class="meta-label">📚 Lección:</span>
+                    <span class="meta-value">{{ getLessonTitle(assignment.lessonId) }}</span>
+                  </span>
+                  <span class="meta-item">
                     <span class="meta-label">📅 Fecha Límite:</span>
                     <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
                   </span>
@@ -97,6 +110,10 @@
                   {{ assignment.description }}
                 </p>
                 <div class="assignment-metadata">
+                  <span class="meta-item">
+                    <span class="meta-label">📚 Lección:</span>
+                    <span class="meta-value">{{ getLessonTitle(assignment.lessonId) }}</span>
+                  </span>
                   <span class="meta-item">
                     <span class="meta-label">📅 Fecha Límite:</span>
                     <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
@@ -140,6 +157,10 @@
                 </p>
                 <div class="assignment-metadata">
                   <span class="meta-item">
+                    <span class="meta-label">📚 Lección:</span>
+                    <span class="meta-value">{{ getLessonTitle(assignment.lessonId) }}</span>
+                  </span>
+                  <span class="meta-item">
                     <span class="meta-label">📅 Fecha Límite:</span>
                     <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
                   </span>
@@ -176,6 +197,10 @@
                   {{ assignment.description }}
                 </p>
                 <div class="assignment-metadata">
+                  <span class="meta-item">
+                    <span class="meta-label">📚 Lección:</span>
+                    <span class="meta-value">{{ getLessonTitle(assignment.lessonId) }}</span>
+                  </span>
                   <span class="meta-item">
                     <span class="meta-label">📅 Fecha Límite:</span>
                     <span class="meta-value">{{ formatDate(assignment.dueDate) }}</span>
