@@ -7,10 +7,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class CalificacionResponse {
+public class TareaResponse {
 
     private Long id;
-    private Double nota;
-    private LocalDateTime fechaCalificacion;
-    private Long claseId;
+    private String titulo;
+    private String descripcion;
+    private LocalDateTime fechaLimite;
+    private Double ponderacion;
 }

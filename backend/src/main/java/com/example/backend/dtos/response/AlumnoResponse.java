@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CursoResponse {
+public class AlumnoResponse {
 
     private Long id;
-    private String titulo;
-    private String descripcion;
-    private Integer totalClases;
+    private String nombre;
+    private String email;
+    private Integer claseActual;
 }
