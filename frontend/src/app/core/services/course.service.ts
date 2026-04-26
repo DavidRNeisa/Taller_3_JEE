@@ -1,40 +1,38 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { Course } from '../../models/course.model';
 import { Lesson } from '../../models/lesson.model';
 import { Assignment } from '../../models/assignment.model';
 import { Grade } from '../../models/grade.model';
 
+interface BackendCourseResponse {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  totalClases: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class CourseService {
-  constructor() { }
+  private readonly apiUrl = environment.apiUrl;
+
+  constructor(private readonly http: HttpClient) { }
 
   getCourses(): Observable<Course[]> {
-    // Mock data - será reemplazado por HTTP call a backend
-    const mockCourses: Course[] = [
-      { id: 1, title: 'Introducción a Listas', description: 'Aprende los conceptos básicos de listas enlazadas', lessonsCount: 34, progress: 0, enrolled: true },
-      { id: 2, title: 'Pilas y Colas', description: 'Estructuras LIFO y FIFO', lessonsCount: 28, progress: 45, enrolled: true },
-      { id: 3, title: 'Árboles Binarios', description: 'Estructuras jerárquicas fundamentales', lessonsCount: 36, progress: 0, enrolled: true },
-      { id: 4, title: 'Grafos', description: 'Teoría de grafos y algoritmos', lessonsCount: 32, progress: 20, enrolled: false },
-      { id: 5, title: 'Búsqueda y Ordenamiento', description: 'Algoritmos clásicos', lessonsCount: 26, progress: 0, enrolled: true },
-      { id: 6, title: 'Hashing', description: 'Tablas hash y búsqueda rápida', lessonsCount: 18, progress: 0, enrolled: true },
-    ];
-    return of(mockCourses);
+    return this.http.get<BackendCourseResponse[]>(`${this.apiUrl}/cursos`).pipe(
+      map((courses) => courses.map((course, index) => this.mapCourse(course, index)))
+    );
   }
 
   getCourseById(id: number): Observable<Course> {
-    // Mock - será reemplazado por HTTP call
-    return of({
-      id,
-      title: 'Introducción a Listas',
-      description: 'Aprende los conceptos básicos de listas enlazadas y su implementación',
-      lessonsCount: 34,
-      progress: 15,
-      enrolled: true
-    });
+    return this.http.get<BackendCourseResponse>(`${this.apiUrl}/cursos/${id}`).pipe(
+      map((course) => this.mapCourse(course))
+    );
   }
 
   getLessonsByCourse(courseId: number): Observable<Lesson[]> {
@@ -198,5 +196,26 @@ export class CourseService {
         };
       }))
     );
+  }
+
+  private mapCourse(course: BackendCourseResponse, index = 0): Course {
+    const lessonsCount = course.totalClases ?? 0;
+
+    return {
+      id: course.id,
+      title: course.titulo,
+      description: course.descripcion,
+      lessonsCount,
+      progress: this.calculateProgress(lessonsCount, index),
+      enrolled: true
+    };
+  }
+
+  private calculateProgress(lessonsCount: number, index: number): number {
+    if (lessonsCount <= 0) {
+      return 0;
+    }
+
+    return Math.min(100, lessonsCount * 15 + index * 5);
   }
 }
