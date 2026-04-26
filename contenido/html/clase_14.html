@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 14: Árboles Binarios de Búsqueda (BST)</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 14: Árboles Binarios de Búsqueda (BST)</h1>
+<p class="subtitulo">La estructura para búsqueda dinámica eficiente</p>
+<h2>Propiedad BST</h2>
+<p>En un <strong>BST</strong>, para cada nodo n:</p>
+<ul>
+  <li>Todo valor en el subárbol izquierdo es <strong>menor</strong> que n.</li>
+  <li>Todo valor en el subárbol derecho es <strong>mayor</strong> que n.</li>
+</ul>
+<p>Esta propiedad permite búsqueda binaria eficiente dentro del árbol.</p>
+<h2>Inserción</h2>
+<pre>
+struct Nodo { int v; Nodo *izq,*der; Nodo(int x):v(x),izq(nullptr),der(nullptr){} };
+
+Nodo* insertar(Nodo* raiz, int val) {
+    if (!raiz) return new Nodo(val);
+    if (val &lt; raiz->v) raiz->izq = insertar(raiz->izq, val);
+    else if (val > raiz->v) raiz->der = insertar(raiz->der, val);
+    // si val == raiz->v: ignorar duplicado
+    return raiz;
+}
+// Traza con valores 10,5,15,3,7:
+//        10
+//       /  \
+//      5   15
+//     / \
+//    3   7
+</pre>
+<h2>Búsqueda</h2>
+<pre>
+bool buscar(Nodo* raiz, int val) {
+    if (!raiz) return false;
+    if (val == raiz->v) return true;
+    if (val &lt; raiz->v) return buscar(raiz->izq, val);
+    return buscar(raiz->der, val);
+}
+// En cada paso descartamos la mitad del árbol → O(log n) promedio
+</pre>
+<h2>Eliminación — el caso más complejo</h2>
+<pre>
+Nodo* minNodo(Nodo* n) {
+    while (n->izq) n = n->izq;
+    return n;
+}
+Nodo* eliminar(Nodo* raiz, int val) {
+    if (!raiz) return nullptr;
+    if (val &lt; raiz->v) raiz->izq = eliminar(raiz->izq, val);
+    else if (val > raiz->v) raiz->der = eliminar(raiz->der, val);
+    else {
+        // Caso 1: hoja
+        if (!raiz->izq && !raiz->der) { delete raiz; return nullptr; }
+        // Caso 2: un solo hijo
+        if (!raiz->izq) { Nodo* t=raiz->der; delete raiz; return t; }
+        if (!raiz->der) { Nodo* t=raiz->izq; delete raiz; return t; }
+        // Caso 3: dos hijos → reemplazar con sucesor inorden
+        Nodo* suc = minNodo(raiz->der);
+        raiz->v = suc->v;
+        raiz->der = eliminar(raiz->der, suc->v);
+    }
+    return raiz;
+}
+</pre>
+<h2>Complejidades</h2>
+<table>
+  <tr><th>Operación</th><th>Caso promedio</th><th>Peor caso (árbol degenerado)</th></tr>
+  <tr><td>Búsqueda</td><td>O(log n)</td><td>O(n)</td></tr>
+  <tr><td>Inserción</td><td>O(log n)</td><td>O(n)</td></tr>
+  <tr><td>Eliminación</td><td>O(log n)</td><td>O(n)</td></tr>
+</table>
+<div class="alerta"><strong>Árbol degenerado:</strong> si insertas valores ordenados {1,2,3,4,5}, el BST se convierte en una lista enlazada → todas las operaciones son O(n). Solución: árboles balanceados (AVL, Red-Black).</div>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 29: Kruskal y Floyd-Warshall</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 29: Kruskal y Floyd-Warshall</h1>
+<p class="subtitulo">MST alternativo y caminos mínimos entre todos los pares</p>
+<h2>Algoritmo de Kruskal — MST por aristas</h2>
+<p>Kruskal construye el MST ordenando las aristas por peso y añadiéndolas si no crean un ciclo. Usa la estructura <strong>Union-Find</strong> para detectar ciclos eficientemente.</p>
+<pre>
+// Union-Find con compresión de caminos y unión por rango
+struct UnionFind {
+    vector&lt;int&gt; padre, rango;
+    UnionFind(int n): padre(n), rango(n,0) {
+        iota(padre.begin(), padre.end(), 0);
+    }
+    int encontrar(int x) {
+        if (padre[x]!=x) padre[x]=encontrar(padre[x]);  // compresión
+        return padre[x];
+    }
+    bool unir(int x, int y) {
+        int px=encontrar(x), py=encontrar(y);
+        if (px==py) return false;  // mismo componente: ciclo
+        if (rango[px] &lt; rango[py]) swap(px,py);
+        padre[py]=px;
+        if (rango[px]==rango[py]) rango[px]++;
+        return true;
+    }
+};
+
+int kruskal(int V, vector&lt;tuple&lt;int,int,int&gt;&gt;& aristas) {
+    sort(aristas.begin(), aristas.end());  // ordenar por peso
+    UnionFind uf(V);
+    int pesoTotal=0, aristasAgregadas=0;
+    for (auto [w,u,v] : aristas) {
+        if (uf.unir(u,v)) {
+            cout &lt;&lt; u &lt;&lt; "-" &lt;&lt; v &lt;&lt; " (" &lt;&lt; w &lt;&lt; ")\n";
+            pesoTotal += w;
+            if (++aristasAgregadas == V-1) break;  // MST completo
+        }
+    }
+    return pesoTotal;
+}
+// Complejidad: O(E log E) dominada por el ordenamiento
+</pre>
+<h2>Kruskal vs Prim</h2>
+<table>
+  <tr><th></th><th>Kruskal</th><th>Prim</th></tr>
+  <tr><td>Enfoque</td><td>Aristas ordenadas por peso</td><td>Crecer árbol desde un nodo</td></tr>
+  <tr><td>Estructura auxiliar</td><td>Union-Find</td><td>Cola de prioridad</td></tr>
+  <tr><td>Mejor en</td><td>Grafos dispersos E ≈ O(V)</td><td>Grafos densos E ≈ O(V²)</td></tr>
+</table>
+<h2>Algoritmo de Floyd-Warshall — Todos los pares</h2>
+<p>Calcula el camino más corto entre <em>todos</em> los pares de nodos, incluyendo con pesos negativos (pero sin ciclos negativos). Complejidad: O(V³).</p>
+<pre>
+void floydWarshall(vector&lt;vector&lt;int&gt;&gt;& dist, int V) {
+    // Inicializar: dist[i][j] = peso de arista i→j, INF si no existe, 0 en diagonal
+
+    for (int k=0; k&lt;V; k++)          // nodo intermedio
+        for (int i=0; i&lt;V; i++)      // origen
+            for (int j=0; j&lt;V; j++)  // destino
+                if (dist[i][k] != INF && dist[k][j] != INF)
+                    dist[i][j] = min(dist[i][j], dist[i][k]+dist[k][j]);
+
+    // Detectar ciclos negativos: si dist[i][i] &lt; 0 → hay ciclo negativo
+}
+// dist[i][j] = distancia mínima de i a j tras el algoritmo
+</pre>
+<h2>Ejemplo de traza (4 nodos)</h2>
+<pre>
+// Grafo: 0→1(3), 0→3(7), 1→0(8), 1→2(2), 2→0(5), 2→3(1), 3→0(2)
+// Distancia inicial (∞ = sin arista directa):
+//    0  1  2  3
+// 0[ 0, 3, ∞, 7]
+// 1[ 8, 0, 2, ∞]
+// 2[ 5, ∞, 0, 1]
+// 3[ 2, ∞, ∞, 0]
+
+// Tras Floyd-Warshall:
+//    0  1  2  3
+// 0[ 0, 3, 5, 6]
+// 1[ 8, 0, 2, 3]
+// 2[ 5, 8, 0, 1]
+// 3[ 2, 5, 7, 0]
+</pre>
+
+</body>
+</html>

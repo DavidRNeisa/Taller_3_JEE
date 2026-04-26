@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 17: Montículos (Heaps) y Colas de Prioridad</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 17: Montículos (Heaps)</h1>
+<p class="subtitulo">Árbol binario completo con orden parcial: la cola de prioridad eficiente</p>
+<h2>Definición</h2>
+<p>Un <strong>heap</strong> es un árbol binario <em>completo</em> que satisface la <em>propiedad de heap</em>:</p>
+<ul>
+  <li><strong>Max-Heap:</strong> el valor de cada nodo es ≥ el de sus hijos. La raíz es el máximo.</li>
+  <li><strong>Min-Heap:</strong> el valor de cada nodo es ≤ el de sus hijos. La raíz es el mínimo.</li>
+</ul>
+<h2>Representación en arreglo</h2>
+<p>Al ser un árbol completo, se puede representar eficientemente en un arreglo sin punteros:</p>
+<pre>
+// Para el nodo en índice i:
+int padre(int i)    { return (i-1)/2; }
+int hijoIzq(int i)  { return 2*i+1; }
+int hijoDer(int i)  { return 2*i+2; }
+
+// Max-Heap: [90, 80, 70, 40, 50, 60, 30]
+//              90
+//            /    \
+//          80      70
+//         /  \    /  \
+//        40  50  60   30
+</pre>
+<h2>Operación Heapify-Up (inserción)</h2>
+<pre>
+void push(vector&lt;int&gt;& heap, int val) {
+    heap.push_back(val);
+    int i = heap.size()-1;
+    // subir hasta que el padre sea mayor o sea la raíz
+    while (i > 0 && heap[padre(i)] &lt; heap[i]) {
+        swap(heap[i], heap[padre(i)]);
+        i = padre(i);
+    }
+}
+// Complejidad: O(log n)
+</pre>
+<h2>Operación Heapify-Down (extracción del máximo)</h2>
+<pre>
+int pop(vector&lt;int&gt;& heap) {
+    int maximo = heap[0];
+    heap[0] = heap.back();
+    heap.pop_back();
+    int i = 0, n = heap.size();
+    while (true) {
+        int mayor = i;
+        int l = hijoIzq(i), r = hijoDer(i);
+        if (l &lt; n && heap[l] > heap[mayor]) mayor = l;
+        if (r &lt; n && heap[r] > heap[mayor]) mayor = r;
+        if (mayor == i) break;
+        swap(heap[i], heap[mayor]);
+        i = mayor;
+    }
+    return maximo;
+}
+// Complejidad: O(log n)
+</pre>
+<h2>Construcción en O(n) — Build-Heap</h2>
+<pre>
+// Aplicar heapify-down desde el último nodo interno hacia la raíz
+void buildHeap(vector&lt;int&gt;& arr) {
+    for (int i = arr.size()/2 - 1; i >= 0; i--)
+        heapifyDown(arr, i);
+}
+// Aunque parece O(n log n), el análisis amortizado da O(n)
+</pre>
+<h2>Heapsort: ordenamiento en O(n log n)</h2>
+<pre>
+// 1. Build-Heap: O(n)
+// 2. n veces: extraer máximo y poner al final: O(n log n)
+// In-place, sin memoria extra — pero no estable
+</pre>
+<h2>STL: priority_queue</h2>
+<pre>
+#include &lt;queue&gt;
+priority_queue&lt;int&gt; maxH;           // max-heap por defecto
+priority_queue&lt;int,vector&lt;int&gt;,greater&lt;int&gt;&gt; minH; // min-heap
+maxH.push(5); maxH.push(1); maxH.push(8);
+cout &lt;&lt; maxH.top(); // 8
+maxH.pop();
+</pre>
+<h2>Complejidades</h2>
+<table>
+  <tr><th>Operación</th><th>Complejidad</th></tr>
+  <tr><td>Insertar (push)</td><td>O(log n)</td></tr>
+  <tr><td>Extraer máximo/mínimo (pop)</td><td>O(log n)</td></tr>
+  <tr><td>Ver máximo/mínimo (top)</td><td>O(1)</td></tr>
+  <tr><td>Construir heap (build)</td><td>O(n)</td></tr>
+</table>
+
+</body>
+</html>

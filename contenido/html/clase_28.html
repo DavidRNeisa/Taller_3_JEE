@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 28: Algoritmos de Prim y Dijkstra</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 28: Prim y Dijkstra</h1>
+<p class="subtitulo">Árbol de expansión mínima y caminos más cortos desde una fuente</p>
+<h2>Algoritmo de Prim — Árbol de Expansión Mínima</h2>
+<p>Dado un grafo conexo ponderado no dirigido, el <strong>árbol de expansión mínima (MST)</strong> es el subconjunto de aristas que conecta todos los vértices con el mínimo peso total. Prim construye el MST creciendo un árbol desde un nodo inicial.</p>
+<pre>
+// Prim con min-heap — O((V+E) log V)
+void prim(vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;& adj, int V) {
+    vector&lt;int&gt; dist(V, INT_MAX), padre(V,-1);
+    vector&lt;bool&gt; enMST(V, false);
+    priority_queue&lt;pair&lt;int,int&gt;, vector&lt;pair&lt;int,int&gt;&gt;, greater&lt;&gt;&gt; pq;
+
+    dist[0] = 0; pq.push({0, 0});
+    while (!pq.empty()) {
+        int u = pq.top().second; pq.pop();
+        if (enMST[u]) continue;
+        enMST[u] = true;
+        for (auto [w, v] : adj[u]) {
+            if (!enMST[v] && w &lt; dist[v]) {
+                dist[v]=w; padre[v]=u;
+                pq.push({w, v});
+            }
+        }
+    }
+    int pesoTotal = 0;
+    for (int v=1; v&lt;V; v++) {
+        cout &lt;&lt; padre[v] &lt;&lt; "-" &lt;&lt; v &lt;&lt; " (" &lt;&lt; dist[v] &lt;&lt; ")\n";
+        pesoTotal += dist[v];
+    }
+    cout &lt;&lt; "Peso MST: " &lt;&lt; pesoTotal &lt;&lt; "\n";
+}
+</pre>
+<h2>Algoritmo de Dijkstra — Camino Más Corto</h2>
+<p>Dado un grafo ponderado con pesos no negativos, encuentra el camino más corto desde un nodo fuente a todos los demás. Utiliza una estrategia voraz con cola de prioridad.</p>
+<pre>
+// Dijkstra con min-heap — O((V+E) log V)
+vector&lt;int&gt; dijkstra(vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt;& adj, int origen, int V) {
+    vector&lt;int&gt; dist(V, INT_MAX);
+    priority_queue&lt;pair&lt;int,int&gt;, vector&lt;pair&lt;int,int&gt;&gt;, greater&lt;&gt;&gt; pq;
+
+    dist[origen] = 0;
+    pq.push({0, origen});
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;  // versión desactualizada, ignorar
+
+        for (auto [w, v] : adj[u]) {
+            if (dist[u] + w &lt; dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    return dist;
+}
+// dist[v] = distancia mínima desde origen hasta v
+</pre>
+<h2>Reconstruir el camino</h2>
+<pre>
+vector&lt;int&gt; padre(V, -1);
+// Dentro de Dijkstra, cuando actualizamos dist[v]: padre[v] = u;
+// Para reconstruir:
+vector&lt;int&gt; reconstruir(int destino, vector&lt;int&gt;& padre) {
+    vector&lt;int&gt; camino;
+    for (int v=destino; v!=-1; v=padre[v]) camino.push_back(v);
+    reverse(camino.begin(), camino.end());
+    return camino;
+}
+</pre>
+<h2>Prim vs Dijkstra: diferencias clave</h2>
+<table>
+  <tr><th></th><th>Prim</th><th>Dijkstra</th></tr>
+  <tr><td>Objetivo</td><td>MST (árbol que conecta todo)</td><td>Caminos más cortos desde un nodo</td></tr>
+  <tr><td>Selección</td><td>Mínimo peso de arista al árbol actual</td><td>Mínima distancia acumulada</td></tr>
+  <tr><td>Resultado</td><td>Árbol de expansión mínima</td><td>Distancias mínimas desde origen</td></tr>
+  <tr><td>Complejidad</td><td>O((V+E) log V)</td><td>O((V+E) log V)</td></tr>
+  <tr><td>Pesos negativos</td><td>Sí (no los acumula)</td><td>No — usar Bellman-Ford</td></tr>
+</table>
+
+</body>
+</html>

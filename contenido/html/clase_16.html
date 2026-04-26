@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 16: Árboles de Partición del Espacio</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 16: Árboles de Partición del Espacio</h1>
+<p class="subtitulo">Quadtree, K-d Tree y Octree: búsqueda espacial eficiente</p>
+<h2>¿Por qué árboles de partición?</h2>
+<p>Las búsquedas en espacios multidimensionales (¿qué objetos están dentro de este rectángulo? ¿cuál es el vecino más cercano?) son ineficientes con estructuras lineales. Los árboles de partición dividen el espacio recursivamente para acelerar estas consultas.</p>
+<h2>Quadtree</h2>
+<p>Divide un plano 2D en cuatro cuadrantes recursivamente. Cada nodo representa una región y tiene hasta 4 hijos.</p>
+<pre>
+struct NodoQt {
+    double x, y, ancho, alto;  // región
+    NodoQt* cuadrantes[4];     // NE, NO, SE, SO
+    vector&lt;Punto&gt; puntos;      // puntos en esta región (si es hoja)
+};
+
+PSEUDOCÓDIGO insertar(nodo, punto):
+  SI nodo es hoja Y puntos.tamaño &lt; MAX:
+    puntos.agregar(punto)
+  SINO:
+    SI no tiene hijos: subdivir en 4 cuadrantes
+    insertar en el cuadrante correspondiente
+
+// Búsqueda en rango: O(log n + k) donde k = puntos encontrados
+</pre>
+<p><strong>Aplicaciones:</strong> compresión de imágenes, detección de colisiones en videojuegos, GIS (sistemas de información geográfica).</p>
+<h2>Octree</h2>
+<p>Extensión del Quadtree al espacio 3D: cada nodo se divide en 8 octantes.</p>
+<p><strong>Aplicaciones:</strong> renderización 3D (culling de objetos fuera del campo de visión), simulaciones de física, nubes de puntos en escáneres 3D.</p>
+<h2>K-d Tree</h2>
+<p>Árbol binario que divide el espacio k-dimensional alternando la dimensión de corte en cada nivel.</p>
+<pre>
+// Para 2D: nivel par divide por X, nivel impar divide por Y
+struct NodoKD {
+    double punto[2];   // {x, y}
+    NodoKD *izq, *der;
+};
+
+NodoKD* construir(vector&lt;Punto&gt;& pts, int profundidad) {
+    if (pts.empty()) return nullptr;
+    int eje = profundidad % 2;   // 0=X, 1=Y
+    // ordenar por el eje actual y tomar el mediano
+    sort(pts.begin(), pts.end(), [eje](Punto a, Punto b){ return a[eje]&lt;b[eje]; });
+    int mid = pts.size() / 2;
+    NodoKD* nodo = new NodoKD{pts[mid]};
+    nodo->izq = construir(subvector(pts, 0, mid), profundidad+1);
+    nodo->der = construir(subvector(pts, mid+1, pts.size()), profundidad+1);
+    return nodo;
+}
+// Construcción: O(n log n). Búsqueda vecino más cercano: O(log n) promedio
+</pre>
+<h2>Comparativa</h2>
+<table>
+  <tr><th>Estructura</th><th>Dimensiones</th><th>Consulta rango</th><th>Vecino cercano</th></tr>
+  <tr><td>Quadtree</td><td>2D</td><td>O(√n + k)</td><td>O(log n)</td></tr>
+  <tr><td>Octree</td><td>3D</td><td>O(n^(2/3) + k)</td><td>O(log n)</td></tr>
+  <tr><td>K-d Tree</td><td>k-D</td><td>O(n^(1-1/k) + k)</td><td>O(log n) prom.</td></tr>
+</table>
+
+</body>
+</html>

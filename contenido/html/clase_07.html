@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 7: Multilistas y Composición de Estructuras</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 7: Multilistas y Composición de Estructuras</h1>
+<p class="subtitulo">Modelar relaciones complejas con estructuras interconectadas</p>
+<h2>¿Qué es una multilista?</h2>
+<p>Una <strong>multilista</strong> es una estructura donde los nodos participan simultáneamente en <em>múltiples listas</em>. Cada nodo tiene más de un puntero "siguiente", uno por cada lista a la que pertenece.</p>
+<div class="concepto"><strong>Caso real:</strong> Un estudiante pertenece a la vez a la lista de su carrera, a la de cada materia y a la de su dormitorio. Un único nodo participa en varias listas sin duplicar datos.</div>
+<h2>Estructura de nodo multi-enlazado</h2>
+<pre>
+struct Estudiante {
+    string nombre;
+    int    codigo;
+    Estudiante* sigCarrera;    // enlace en la lista de su carrera
+    Estudiante* sigMateria;    // enlace en la lista de la materia
+    Estudiante* sigDormitorio; // enlace en la lista del dormitorio
+};
+</pre>
+<p>Actualizar el nombre del estudiante lo actualiza en todas las vistas simultáneamente, sin inconsistencias.</p>
+<h2>Matrices dispersas con multilistas</h2>
+<p>Una <strong>matriz dispersa</strong> tiene la mayoría de sus elementos en cero. Guardar todos los n² valores desperdiciaría memoria. La multilista solo almacena los no-cero, con enlaces por fila y por columna:</p>
+<pre>
+struct NodoMatriz {
+    int    fila, columna;
+    double valor;
+    NodoMatriz* sigFila;    // siguiente en la misma fila
+    NodoMatriz* sigColumna; // siguiente en la misma columna
+};
+// Matriz 1000×1000 con 1000 elementos ≠ 0:
+// Sin multilista: 1 000 000 entradas
+// Con multilista: 1 000 nodos — ahorro de 99.9%
+</pre>
+<h2>Composición de estructuras</h2>
+<p>La composición construye estructuras complejas combinando simples (principio "has-a"):</p>
+<pre>
+struct Punto { double x, y; };
+
+struct Rectangulo {
+    Punto esquinaSupIzq;
+    Punto esquinaInfDer;
+};
+
+struct Grafo {
+    vector&lt;string&gt;       vertices;
+    vector&lt;vector&lt;int&gt;&gt;  adyacencia;  // vector de vectores
+};
+</pre>
+<h2>Sistema académico compuesto</h2>
+<pre>
+struct Materia {
+    string           nombre;
+    int              creditos;
+    list&lt;Estudiante*&gt; inscritos;
+};
+
+struct Carrera {
+    string           nombre;
+    list&lt;Estudiante*&gt; estudiantes;
+    list&lt;Materia&gt;    materias;
+};
+</pre>
+<h2>Ventajas y desventajas</h2>
+<table>
+  <tr><th>Ventaja</th><th>Desventaja</th></tr>
+  <tr><td>Sin duplicación de datos</td><td>Mayor complejidad de implementación</td></tr>
+  <tr><td>Consistencia automática entre vistas</td><td>Gestión de memoria más delicada</td></tr>
+  <tr><td>Eficiencia en múltiples tipos de consulta</td><td>Difícil de depurar</td></tr>
+</table>
+
+</body>
+</html>

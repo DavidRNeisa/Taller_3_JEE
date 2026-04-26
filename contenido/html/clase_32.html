@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 32: Cierre del Curso: Síntesis y Conexiones</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 32: Cierre del Curso — Síntesis y Conexiones</h1>
+<p class="subtitulo">Cómo todas las estructuras se conectan y cuándo usar cada una</p>
+<h2>El mapa completo del curso</h2>
+<table>
+  <tr><th>Categoría</th><th>Estructuras</th><th>Complejidad clave</th></tr>
+  <tr><td>Lineales</td><td>Arreglo, Lista, Pila, Cola</td><td>O(1)–O(n)</td></tr>
+  <tr><td>Árboles básicos</td><td>BST, AVL, Red-Black</td><td>O(log n)</td></tr>
+  <tr><td>Árboles especializados</td><td>Heap, Huffman, Quadtree</td><td>O(log n)–O(n)</td></tr>
+  <tr><td>Hash</td><td>Tabla hash, unordered_map</td><td>O(1) promedio</td></tr>
+  <tr><td>Grafos</td><td>Grafo dirigido/no dirigido/ponderado</td><td>O(V+E)–O(V³)</td></tr>
+</table>
+<h2>Guía de selección de estructuras</h2>
+<pre>
+¿Necesitas...
+│
+├── Acceso por posición rápido (O(1)) → Arreglo / vector
+├── Inserción/eliminación rápida en el medio → Lista enlazada
+├── LIFO (deshacer, parsing) → Pila
+├── FIFO (colas de espera, BFS) → Cola
+├── Prioridad (evento más urgente) → Heap / priority_queue
+├── Búsqueda por clave O(1) → Tabla hash / unordered_map
+├── Búsqueda ordenada O(log n) → BST / map
+├── Datos siempre ordenados con O(log n) garantizado → AVL / Red-Black
+├── Comprimir datos → Árbol de Huffman
+├── Relaciones entre entidades → Grafo
+│   ├── Camino más corto (sin pesos) → BFS
+│   ├── Camino más corto (pesos ≥ 0, un origen) → Dijkstra
+│   ├── Camino más corto (todos los pares) → Floyd-Warshall
+│   ├── Árbol de expansión mínima → Prim / Kruskal
+│   └── Detección de ciclos / componentes → DFS
+└── Búsqueda espacial 2D → Quadtree / K-d Tree
+</pre>
+<h2>Reflexión final: las tres preguntas del ingeniero</h2>
+<ol>
+  <li><strong>¿Qué operaciones son más frecuentes?</strong> Diseña alrededor de la operación más común.</li>
+  <li><strong>¿Cuántos datos habrá?</strong> La diferencia entre O(n) y O(n²) es irrelevante para n=100; es vital para n=10⁶.</li>
+  <li><strong>¿Qué garantías necesito?</strong> ¿O(1) amortizado es suficiente, o necesito O(1) garantizado en cada operación?</li>
+</ol>
+<div class="concepto"><strong>La lección central del curso:</strong> No existe una "mejor" estructura de datos. Existe la estructura más adecuada para el problema específico. Un buen ingeniero conoce el repertorio completo y sabe cuándo usar cada herramienta.</div>
+<h2>Conexiones entre estructuras</h2>
+<ul>
+  <li>Una <strong>pila</strong> implementa el recorrido DFS en grafos.</li>
+  <li>Una <strong>cola</strong> implementa el recorrido BFS en grafos.</li>
+  <li>Un <strong>heap</strong> acelera Dijkstra y Prim.</li>
+  <li>Un <strong>árbol</strong> es un grafo conexo acíclico.</li>
+  <li>La <strong>tabla hash</strong> permite la memoización que transforma recursión exponencial en lineal.</li>
+  <li>El <strong>Union-Find</strong> (árbol de conjuntos disjuntos) es esencial para Kruskal.</li>
+</ul>
+
+</body>
+</html>

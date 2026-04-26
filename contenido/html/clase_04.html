@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 4: Taller de Complejidad Algorítmica</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 4: Taller de Complejidad Algorítmica</h1>
+<p class="subtitulo">Análisis práctico: determinar Big-O paso a paso</p>
+<h2>Metodología de análisis</h2>
+<ol>
+  <li>Identificar las operaciones elementales (comparaciones, asignaciones).</li>
+  <li>Contar cuántas veces ejecuta cada estructura de control.</li>
+  <li>Expresar el total en función de n.</li>
+  <li>Conservar el término dominante, eliminar constantes.</li>
+</ol>
+<h2>Ejercicio 1: Bucles anidados independientes</h2>
+<pre>
+for (int i = 0; i &lt; n; i++)        // n veces
+    for (int j = 0; j &lt; n; j++)    // n veces por i
+        cout &lt;&lt; i + j;             // O(1)
+// Total: n × n = n² → O(n²)
+</pre>
+<h2>Ejercicio 2: Bucle con límite dependiente de i</h2>
+<pre>
+for (int i = 0; i &lt; n; i++)
+    for (int j = 0; j &lt; i; j++)   // 0+1+2+...+(n-1)
+        operacion();
+// Total: n(n-1)/2 → O(n²)
+</pre>
+<h2>Ejercicio 3: Búsqueda lineal — análisis por caso</h2>
+<pre>
+int buscar(int arr[], int n, int x) {
+    for (int i = 0; i &lt; n; i++)
+        if (arr[i] == x) return i;
+    return -1;
+}
+// Mejor caso: O(1) — encontrado en primera posición
+// Peor caso:  O(n) — no está, o está al final
+// Promedio:   O(n/2) → O(n)
+</pre>
+<h2>Ejercicio 4: División recursiva</h2>
+<pre>
+void dividir(int n) {
+    while (n > 1) {
+        cout &lt;&lt; n;
+        n = n / 2;   // n se divide entre 2 en cada paso
+    }
+}
+// Iteraciones = log₂(n) → O(log n)
+</pre>
+<h2>Ejercicio 5: Bucles secuenciales</h2>
+<pre>
+void combinado(int n) {
+    for (int i = 0; i &lt; n; i++)           // O(n)
+        cout &lt;&lt; i;
+    for (int i = 0; i &lt; n; i++)           // O(n²)
+        for (int j = 0; j &lt; n; j++)
+            cout &lt;&lt; i*j;
+}
+// O(n) + O(n²) = O(n²) — domina el mayor
+</pre>
+<h2>Ejercicio 6: Bucle externo logarítmico</h2>
+<pre>
+void misterio(int n) {
+    for (int i = 1; i &lt;= n; i *= 2)   // O(log n) iteraciones
+        for (int j = 0; j &lt; n; j++)   // O(n) cada vez
+            cout &lt;&lt; i + j;
+}
+// Total: O(n log n)
+</pre>
+<h2>Tabla comparativa</h2>
+<table>
+  <tr><th>n</th><th>O(log n)</th><th>O(n)</th><th>O(n log n)</th><th>O(n²)</th></tr>
+  <tr><td>10</td><td>3</td><td>10</td><td>33</td><td>100</td></tr>
+  <tr><td>1 000</td><td>10</td><td>1 000</td><td>9 966</td><td>1 000 000</td></tr>
+  <tr><td>1 000 000</td><td>20</td><td>10⁶</td><td>~2×10⁷</td><td>10¹²</td></tr>
+</table>
+<div class="alerta"><strong>Reflexión:</strong> O(n²) con n=10⁶ realiza 10¹² operaciones. A 10⁹ ops/seg → ~1 000 segundos. O(n log n) lo haría en ~20 segundos.</div>
+
+</body>
+</html>

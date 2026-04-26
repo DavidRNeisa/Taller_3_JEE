@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 24: Proyecto — Entrega 2: Implementación</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 24: Proyecto — Entrega 2</h1>
+<p class="subtitulo">Del diseño al código: implementar, probar y documentar</p>
+<h2>¿Qué se entrega?</h2>
+<ol>
+  <li>Implementación funcional de las estructuras elegidas en la Entrega 1.</li>
+  <li>Suite de pruebas que cubre casos normales y borde.</li>
+  <li>Análisis de complejidad de cada operación implementada.</li>
+  <li>Código documentado con comentarios significativos.</li>
+</ol>
+<h2>Buenas prácticas de implementación</h2>
+<h3>1. Manejo de casos borde</h3>
+<pre>
+// Siempre verificar: estructura vacía, un solo elemento, elemento no encontrado
+Nodo* eliminar(Nodo* raiz, int val) {
+    if (!raiz) return nullptr;    // árbol vacío — caso borde
+    // ...
+}
+bool buscar(Nodo* raiz, int val) {
+    if (!raiz) return false;      // árbol vacío — caso borde
+    // ...
+}
+</pre>
+<h3>2. Gestión de memoria</h3>
+<pre>
+// Destructor que libera toda la memoria
+~BST() { liberarArbol(raiz); }
+
+void liberarArbol(Nodo* r) {
+    if (!r) return;
+    liberarArbol(r->izq);
+    liberarArbol(r->der);
+    delete r;     // postorden: liberar hojas primero
+}
+</pre>
+<h3>3. Pruebas sistemáticas</h3>
+<pre>
+void probarBST() {
+    BST arbol;
+    // Prueba 1: árbol vacío
+    assert(!arbol.buscar(5));
+    assert(arbol.getAltura() == 0);
+
+    // Prueba 2: inserción y búsqueda
+    arbol.insertar(10); arbol.insertar(5); arbol.insertar(15);
+    assert(arbol.buscar(5) == true);
+    assert(arbol.buscar(99) == false);
+
+    // Prueba 3: eliminación
+    arbol.eliminar(5);
+    assert(!arbol.buscar(5));
+
+    // Prueba 4: inserción ordenada (peor caso BST)
+    BST arbolDeg;
+    for (int i=1; i&lt;=10; i++) arbolDeg.insertar(i);
+    assert(arbolDeg.getAltura() == 10);  // degenerado
+
+    cout &lt;&lt; "Todas las pruebas pasaron.\n";
+}
+</pre>
+<h2>Documentación del código</h2>
+<pre>
+/**
+ * Elimina un valor del BST.
+ * Si el nodo tiene dos hijos, lo reemplaza con su sucesor inorden.
+ *
+ * @param raiz Puntero al nodo raíz del subárbol actual
+ * @param val  Valor a eliminar
+ * @return     Nueva raíz del subárbol (puede cambiar)
+ *
+ * Complejidad: O(log n) promedio, O(n) peor caso
+ */
+Nodo* eliminar(Nodo* raiz, int val) { ... }
+</pre>
+<h2>Checklist de entrega</h2>
+<ul>
+  <li>☐ Todas las operaciones especificadas están implementadas</li>
+  <li>☐ Los casos borde están manejados (estructura vacía, un elemento, duplicados)</li>
+  <li>☐ No hay fugas de memoria (verificado con Valgrind o manualmente)</li>
+  <li>☐ Las pruebas pasan en todos los casos</li>
+  <li>☐ El código tiene comentarios significativos</li>
+  <li>☐ El análisis de complejidad está documentado</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 36: Entrega Final del Proyecto</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 36: Entrega Final del Proyecto</h1>
+<p class="subtitulo">Cierre del curso: reflexión, evaluación y próximos pasos</p>
+<h2>Componentes de la entrega final</h2>
+<table>
+  <tr><th>Componente</th><th>Descripción</th><th>Peso típico</th></tr>
+  <tr><td>Código fuente</td><td>Implementación completa, limpia y documentada</td><td>50%</td></tr>
+  <tr><td>Informe técnico</td><td>Diseño, justificación de estructuras, análisis de complejidad</td><td>25%</td></tr>
+  <tr><td>Pruebas</td><td>Suite de pruebas que cubre casos normales y borde</td><td>15%</td></tr>
+  <tr><td>Presentación</td><td>Demo en vivo y defensa del diseño</td><td>10%</td></tr>
+</table>
+<h2>Informe técnico: estructura sugerida</h2>
+<pre>
+1. Descripción del problema
+   - Contexto y motivación
+   - Alcance y limitaciones
+
+2. Diseño de la solución
+   - Estructuras de datos usadas y justificación
+   - Diagrama de la arquitectura
+
+3. Análisis de complejidad
+   - Tabla: operación | complejidad temporal | complejidad espacial
+   - Justificación de cada análisis
+
+4. Casos de prueba
+   - Descripción del caso
+   - Entrada de prueba
+   - Salida esperada vs. obtenida
+
+5. Conclusiones
+   - Dificultades encontradas y cómo se resolvieron
+   - Qué mejorarías con más tiempo
+   - Aprendizajes del proyecto
+</pre>
+<h2>Criterios de evaluación del código</h2>
+<ul>
+  <li>✅ <strong>Corrección:</strong> el programa produce las salidas correctas para todas las entradas.</li>
+  <li>✅ <strong>Eficiencia:</strong> las complejidades son las adecuadas para el problema.</li>
+  <li>✅ <strong>Robustez:</strong> maneja correctamente entradas inválidas y casos borde.</li>
+  <li>✅ <strong>Legibilidad:</strong> nombres descriptivos, funciones cortas, comentarios útiles.</li>
+  <li>✅ <strong>Gestión de memoria:</strong> sin fugas de memoria.</li>
+</ul>
+<h2>Reflexión final del curso</h2>
+<p>Has recorrido un camino que va desde el arreglo más simple hasta los algoritmos de grafos más sofisticados. Las estructuras de datos no son solo abstracciones académicas: son las herramientas con las que los ingenieros construyen sistemas que procesan millones de transacciones, conectan a millones de personas y permiten la inteligencia artificial moderna.</p>
+<div class="concepto">
+<strong>Próximos pasos recomendados:</strong>
+<ul>
+  <li>Practicar en plataformas como LeetCode, HackerRank o Codeforces.</li>
+  <li>Estudiar algoritmos avanzados: programación dinámica, segment trees, tries.</li>
+  <li>Explorar la implementación interna de la STL de C++.</li>
+  <li>Aplicar estas estructuras en proyectos personales reales.</li>
+</ul>
+</div>
+<h2>Las estructuras que aprendiste en una línea cada una</h2>
+<pre>
+Arreglo:       acceso O(1), inserción O(n)
+Lista enlazada: inserción O(1), acceso O(n)
+Pila:          LIFO, todas las ops O(1)
+Cola:          FIFO, todas las ops O(1)
+BST:           búsqueda O(log n) promedio
+AVL/RB:        búsqueda O(log n) garantizado
+Heap:          max/min en O(1), insertar/extraer O(log n)
+Huffman:       compresión óptima por frecuencia
+Hash Table:    búsqueda O(1) promedio
+Grafo + DFS:   recorrer, detectar ciclos, orden topo O(V+E)
+Grafo + BFS:   camino más corto sin pesos O(V+E)
+Dijkstra:      camino más corto ponderado O((V+E)log V)
+Floyd-Warshall:todos los caminos mínimos O(V³)
+Prim/Kruskal:  árbol de expansión mínima O(E log V)
+</pre>
+
+</body>
+</html>

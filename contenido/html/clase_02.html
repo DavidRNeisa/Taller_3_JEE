@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 2: Complejidad Algorítmica y Notación Big-O</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 2: Complejidad Algorítmica y Notación Big-O</h1>
+<p class="subtitulo">Cómo medir y comparar la eficiencia de los algoritmos</p>
+<h2>¿Por qué medir eficiencia?</h2>
+<p>Dos algoritmos que resuelven el mismo problema pueden comportarse de forma radicalmente distinta cuando el volumen de datos crece. Medir la eficiencia nos permite predecir el rendimiento y elegir el algoritmo correcto antes de implementarlo.</p>
+<div class="concepto"><strong>Ejemplo motivador:</strong> Buscar en 1 000 000 de nombres: búsqueda lineal → hasta 1 000 000 pasos. Búsqueda binaria → máximo 20 pasos. La diferencia es astronómica.</div>
+<h2>Complejidad temporal vs. espacial</h2>
+<ul>
+  <li><strong>Temporal:</strong> cuántas operaciones realiza en función del tamaño de entrada n.</li>
+  <li><strong>Espacial:</strong> cuánta memoria adicional requiere.</li>
+</ul>
+<h2>Notación Big-O: clases de complejidad</h2>
+<table>
+  <tr><th>Notación</th><th>Nombre</th><th>Ejemplo típico</th><th>n=1000</th></tr>
+  <tr><td>O(1)</td><td>Constante</td><td>Acceso por índice</td><td>1 op</td></tr>
+  <tr><td>O(log n)</td><td>Logarítmica</td><td>Búsqueda binaria</td><td>~10 ops</td></tr>
+  <tr><td>O(n)</td><td>Lineal</td><td>Búsqueda secuencial</td><td>1 000 ops</td></tr>
+  <tr><td>O(n log n)</td><td>Cuasi-lineal</td><td>Mergesort</td><td>~10 000 ops</td></tr>
+  <tr><td>O(n²)</td><td>Cuadrática</td><td>Burbuja, Selección</td><td>1 000 000 ops</td></tr>
+  <tr><td>O(2ⁿ)</td><td>Exponencial</td><td>Fibonacci ingenuo</td><td>∞ práctico</td></tr>
+</table>
+<h2>Reglas para calcular complejidad</h2>
+<ul>
+  <li>Instrucción simple → O(1)</li>
+  <li>Bucle simple de 0 a n → O(n)</li>
+  <li>Bucles anidados independientes → multiplicar: O(n²)</li>
+  <li>Dividir el problema a la mitad cada paso → O(log n)</li>
+  <li>Bloques secuenciales → conservar el mayor</li>
+</ul>
+<h2>Ejemplos progresivos</h2>
+<pre>
+// O(1)
+int primero(int arr[]) { return arr[0]; }
+
+// O(n)
+int suma(int arr[], int n) {
+    int s = 0;
+    for (int i = 0; i &lt; n; i++) s += arr[i];
+    return s;
+}
+
+// O(n²)
+void pares(int arr[], int n) {
+    for (int i = 0; i &lt; n; i++)
+        for (int j = 0; j &lt; n; j++)
+            cout &lt;&lt; arr[i] &lt;&lt; "," &lt;&lt; arr[j] &lt;&lt; "\n";
+}
+
+// O(log n)
+int busquedaBinaria(int arr[], int n, int x) {
+    int izq = 0, der = n-1;
+    while (izq &lt;= der) {
+        int m = (izq+der)/2;
+        if (arr[m]==x) return m;
+        else if (arr[m]&lt;x) izq=m+1;
+        else der=m-1;
+    }
+    return -1;
+}
+</pre>
+<h2>Casos de análisis</h2>
+<ul>
+  <li><strong>Mejor caso (Ω):</strong> escenario más favorable.</li>
+  <li><strong>Caso promedio (Θ):</strong> comportamiento esperado con entradas típicas.</li>
+  <li><strong>Peor caso (O):</strong> escenario más desfavorable. Es el más usado en diseño.</li>
+</ul>
+<div class="alerta"><strong>Error común:</strong> Big-O no mide velocidad absoluta, sino crecimiento. Un O(n²) con n=10 puede ser más rápido que un O(n) con constante grande.</div>
+
+</body>
+</html>

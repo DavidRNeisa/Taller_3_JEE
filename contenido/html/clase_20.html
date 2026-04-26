@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 20: Árboles de Codificación: Huffman</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 20: Árboles de Codificación — Huffman</h1>
+<p class="subtitulo">Compresión sin pérdida mediante códigos de longitud variable</p>
+<h2>El problema de la compresión</h2>
+<p>En ASCII, cada carácter ocupa 8 bits, sin importar su frecuencia. Si en un texto 'e' aparece 1000 veces y 'z' aparece 2 veces, ambos usan 8 bits. La idea de Huffman: asignar <strong>menos bits a los caracteres más frecuentes</strong>.</p>
+<h2>Algoritmo de Huffman</h2>
+<ol>
+  <li>Calcular la frecuencia de cada símbolo.</li>
+  <li>Crear un nodo hoja por cada símbolo.</li>
+  <li>Usar un min-heap con los nodos ordenados por frecuencia.</li>
+  <li>Repetir hasta que quede un solo nodo: extraer los dos mínimos, crear un nodo padre con frecuencia = suma de ambos, insertarlo en el heap.</li>
+  <li>El árbol resultante define los códigos: 0 para ir a la izquierda, 1 para la derecha.</li>
+</ol>
+<pre>
+// Ejemplo: texto "aabbbccdddd"
+// Frecuencias: a=2, b=3, c=2, d=4
+// Total: 11 caracteres
+
+// Paso 1: heap = [(a,2),(c,2),(b,3),(d,4)]
+// Paso 2: unir a y c → nodo(4), heap = [(b,3),(d,4),(ac,4)]
+// Paso 3: unir b y nodo(ac,4) → nodo(7), heap = [(d,4),(bac,7)]
+// Paso 4: unir d y nodo(bac,7) → raíz(11)
+
+//           11
+//          /   \
+//         4     7
+//        (d)   / \
+//             3   4
+//            (b)  / \
+//                2   2
+//               (a) (c)
+// Códigos: d=0, b=10, a=110, c=111
+</pre>
+<h2>Implementación en C++</h2>
+<pre>
+struct NodoHuff {
+    char c; int freq;
+    NodoHuff *izq, *der;
+    bool operator>(const NodoHuff& o) const { return freq > o.freq; }
+};
+
+void generarCodigos(NodoHuff* r, string codigo, map&lt;char,string&gt;& tabla) {
+    if (!r) return;
+    if (!r->izq && !r->der) tabla[r->c] = codigo;
+    generarCodigos(r->izq, codigo+"0", tabla);
+    generarCodigos(r->der, codigo+"1", tabla);
+}
+
+NodoHuff* construirArbol(map&lt;char,int&gt;& freq) {
+    priority_queue&lt;NodoHuff*, vector&lt;NodoHuff*&gt;,
+                   function&lt;bool(NodoHuff*,NodoHuff*)&gt;&gt;
+        pq([](NodoHuff* a, NodoHuff* b){ return a->freq > b->freq; });
+
+    for (auto& [c,f] : freq) pq.push(new NodoHuff{c,f,nullptr,nullptr});
+
+    while (pq.size() > 1) {
+        auto l = pq.top(); pq.pop();
+        auto r = pq.top(); pq.pop();
+        pq.push(new NodoHuff{0, l->freq+r->freq, l, r});
+    }
+    return pq.top();
+}
+</pre>
+<h2>Eficiencia de la compresión</h2>
+<table>
+  <tr><th>Carácter</th><th>Frecuencia</th><th>Código Huffman</th><th>Bits usados</th></tr>
+  <tr><td>d</td><td>4</td><td>0</td><td>4 × 1 = 4</td></tr>
+  <tr><td>b</td><td>3</td><td>10</td><td>3 × 2 = 6</td></tr>
+  <tr><td>a</td><td>2</td><td>110</td><td>2 × 3 = 6</td></tr>
+  <tr><td>c</td><td>2</td><td>111</td><td>2 × 3 = 6</td></tr>
+  <tr><td colspan="3"><strong>Total comprimido</strong></td><td><strong>22 bits</strong></td></tr>
+  <tr><td colspan="3">Sin compresión (ASCII 8 bits): 11 × 8</td><td>88 bits</td></tr>
+</table>
+<p><strong>Ahorro: 75%.</strong> Huffman es óptimo entre los códigos de prefijo.</p>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 1: Introducción a las Estructuras de Datos</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 1: Introducción a las Estructuras de Datos</h1>
+<p class="subtitulo">Fundamentos, motivación y panorama del curso</p>
+<h2>¿Qué es una estructura de datos?</h2>
+<p>Una <strong>estructura de datos</strong> es una forma organizada de almacenar y gestionar información en memoria, de modo que pueda ser accedida y modificada de manera eficiente. No basta con tener los datos: la forma en que los organizamos determina la rapidez y el costo de operarlos.</p>
+<div class="concepto"><strong>Analogía:</strong> Una biblioteca con libros amontonados en el suelo (sin estructura) versus organizada por género, autor y título (con estructura). Encontrar un libro es trivial en el segundo caso.</div>
+<h2>¿Por qué son importantes?</h2>
+<p>Todo programa maneja datos. La elección de la estructura correcta impacta directamente en:</p>
+<ul>
+  <li><strong>Tiempo de ejecución:</strong> un mal diseño puede hacer que una operación de microsegundos tome segundos.</li>
+  <li><strong>Uso de memoria:</strong> algunas estructuras desperdician espacio; otras lo aprovechan al máximo.</li>
+  <li><strong>Mantenibilidad:</strong> código bien estructurado es más fácil de entender, depurar y extender.</li>
+</ul>
+<h2>Clasificación general</h2>
+<table>
+  <tr><th>Tipo</th><th>Ejemplos</th><th>Característica</th></tr>
+  <tr><td>Lineales</td><td>Arreglo, Lista, Pila, Cola</td><td>Elementos en secuencia</td></tr>
+  <tr><td>No lineales</td><td>Árbol, Grafo</td><td>Relaciones jerárquicas o en red</td></tr>
+  <tr><td>Hash</td><td>Tabla hash, Mapa</td><td>Acceso por clave en O(1)</td></tr>
+</table>
+<h2>Aplicaciones reales</h2>
+<ul>
+  <li><strong>Bases de datos:</strong> B-Trees para índices en millones de registros.</li>
+  <li><strong>Sistemas operativos:</strong> colas de procesos, árboles de directorios.</li>
+  <li><strong>Redes sociales:</strong> grafos para relaciones entre usuarios.</li>
+  <li><strong>Compiladores:</strong> árboles de sintaxis abstracta, tablas de símbolos.</li>
+  <li><strong>Navegadores:</strong> pilas para historial, DOM como árbol.</li>
+</ul>
+<h2>Primer ejemplo: el arreglo</h2>
+<p>El arreglo almacena elementos del mismo tipo en posiciones contiguas de memoria. Acceso por índice: O(1). Insertar/eliminar en el medio: O(n).</p>
+<pre>
+int numeros[5] = {10, 20, 30, 40, 50};
+cout &lt;&lt; numeros[2];   // 30 — acceso O(1)
+
+for (int i = 0; i &lt; 5; i++)
+    cout &lt;&lt; numeros[i] &lt;&lt; " ";  // recorrido O(n)
+</pre>
+<div class="nota"><strong>Nota:</strong> En C++ los índices empiezan en 0. Acceder a <code>numeros[5]</code> en un arreglo de 5 elementos es undefined behavior.</div>
+<h2>Hoja de ruta del curso</h2>
+<ol>
+  <li>Fundamentos: complejidad, TAD, C++ genérico</li>
+  <li>Estructuras lineales: listas, pilas, colas</li>
+  <li>Recursión y estructuras recursivas</li>
+  <li>Árboles: BST, AVL, heaps, Huffman</li>
+  <li>Tablas de dispersión (Hash)</li>
+  <li>Grafos y algoritmos de caminos mínimos</li>
+</ol>
+
+</body>
+</html>

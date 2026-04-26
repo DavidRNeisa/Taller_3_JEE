@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 23: Tablas de Dispersión (Hash Tables)</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 23: Tablas de Dispersión (Hash Tables)</h1>
+<p class="subtitulo">Acceso en O(1): cómo funcionan los mapas y diccionarios</p>
+<h2>Concepto fundamental</h2>
+<p>Una <strong>tabla hash</strong> almacena pares clave-valor. Una <strong>función hash</strong> transforma la clave en un índice del arreglo, permitiendo acceso en O(1) promedio.</p>
+<div class="concepto"><strong>Analogía:</strong> Un casillero con cerradura. La clave es tu nombre; la función hash es la regla que asigna un número de casillero a cada persona. Accedes directamente a tu casillero sin buscar en todos.</div>
+<h2>Función hash</h2>
+<pre>
+// Hash simple por módulo
+int hash(int clave, int tamanio) {
+    return clave % tamanio;
+}
+
+// Hash para strings (djb2)
+unsigned long hashStr(const string& s) {
+    unsigned long h = 5381;
+    for (char c : s) h = ((h &lt;&lt; 5) + h) + c;  // h*33 + c
+    return h;
+}
+// Propiedades deseables: distribución uniforme, rápida de calcular
+</pre>
+<h2>Colisiones</h2>
+<p>Dos claves distintas pueden producir el mismo índice. Hay dos estrategias principales para resolverlas:</p>
+<h3>1. Encadenamiento (Chaining)</h3>
+<pre>
+// Cada celda del arreglo tiene una lista enlazada
+vector&lt;list&lt;pair&lt;int,int&gt;&gt;&gt; tabla(10);
+
+void insertar(int clave, int valor) {
+    int idx = hash(clave, tabla.size());
+    // Buscar si ya existe y actualizar
+    for (auto& [k,v] : tabla[idx])
+        if (k==clave) { v=valor; return; }
+    tabla[idx].push_back({clave, valor});
+}
+
+int buscar(int clave) {
+    int idx = hash(clave, tabla.size());
+    for (auto& [k,v] : tabla[idx])
+        if (k==clave) return v;
+    return -1;  // no encontrado
+}
+// Complejidad promedio O(1); peor caso O(n) si todo colisiona
+</pre>
+<h3>2. Direccionamiento Abierto — Sondeo Lineal</h3>
+<pre>
+// Todos los elementos en el arreglo; si hay colisión, buscar la siguiente celda libre
+int tabla[TAMANIO];
+fill(tabla, tabla+TAMANIO, -1);  // -1 = vacío
+
+void insertar(int clave) {
+    int idx = hash(clave, TAMANIO);
+    while (tabla[idx] != -1)
+        idx = (idx+1) % TAMANIO;  // avanzar linealmente
+    tabla[idx] = clave;
+}
+// Problema: clustering primario — cadenas de celdas ocupadas
+</pre>
+<h2>Factor de carga y rehashing</h2>
+<pre>
+// Factor de carga α = n / capacidad
+// Si α > 0.75: duplicar el tamaño y reinsertar todos los elementos (rehash)
+// Esto mantiene O(1) amortizado en operaciones
+</pre>
+<h2>La STL: unordered_map</h2>
+<pre>
+#include &lt;unordered_map&gt;
+unordered_map&lt;string,int&gt; mapa;
+mapa["Ana"]  = 95;
+mapa["Luis"] = 87;
+cout &lt;&lt; mapa["Ana"];        // 95
+mapa.erase("Luis");          // eliminar
+cout &lt;&lt; mapa.count("Luis"); // 0 — no existe
+</pre>
+<h2>Complejidades</h2>
+<table>
+  <tr><th>Operación</th><th>Promedio</th><th>Peor caso</th></tr>
+  <tr><td>Búsqueda</td><td>O(1)</td><td>O(n)</td></tr>
+  <tr><td>Inserción</td><td>O(1)</td><td>O(n)</td></tr>
+  <tr><td>Eliminación</td><td>O(1)</td><td>O(n)</td></tr>
+</table>
+<div class="alerta"><strong>Cuándo NO usar hash:</strong> si necesitas los datos ordenados, usa <code>map</code> (árbol RB). Si necesitas el mínimo/máximo frecuentemente, usa <code>priority_queue</code>.</div>
+
+</body>
+</html>

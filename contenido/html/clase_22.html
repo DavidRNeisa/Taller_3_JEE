@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 22: Laboratorio Guiado — Árboles BST Completo</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 22: Laboratorio Guiado — Implementación BST Completa</h1>
+<p class="subtitulo">Clase completa de árbol con inserción, búsqueda, eliminación y recorridos</p>
+<h2>Implementación de la clase BST</h2>
+<pre>
+#include &lt;iostream&gt;
+#include &lt;queue&gt;
+using namespace std;
+
+struct Nodo {
+    int v; Nodo *izq,*der;
+    Nodo(int x):v(x),izq(nullptr),der(nullptr){}
+};
+
+class BST {
+    Nodo* raiz = nullptr;
+
+    Nodo* insertar(Nodo* r, int val) {
+        if (!r) return new Nodo(val);
+        if (val &lt; r->v) r->izq = insertar(r->izq, val);
+        else if (val > r->v) r->der = insertar(r->der, val);
+        return r;
+    }
+    bool buscar(Nodo* r, int val) {
+        if (!r) return false;
+        if (val==r->v) return true;
+        return val&lt;r->v ? buscar(r->izq,val) : buscar(r->der,val);
+    }
+    Nodo* minNodo(Nodo* r) { while(r->izq) r=r->izq; return r; }
+    Nodo* eliminar(Nodo* r, int val) {
+        if (!r) return nullptr;
+        if (val&lt;r->v)      r->izq=eliminar(r->izq,val);
+        else if (val>r->v) r->der=eliminar(r->der,val);
+        else {
+            if (!r->izq && !r->der) { delete r; return nullptr; }
+            if (!r->izq) { Nodo* t=r->der; delete r; return t; }
+            if (!r->der) { Nodo* t=r->izq; delete r; return t; }
+            Nodo* s=minNodo(r->der);
+            r->v=s->v;
+            r->der=eliminar(r->der,s->v);
+        }
+        return r;
+    }
+    void inorden(Nodo* r) {
+        if(!r) return; inorden(r->izq); cout&lt;&lt;r->v&lt;&lt;" "; inorden(r->der);
+    }
+    int altura(Nodo* r) {
+        if(!r) return 0; return 1+max(altura(r->izq),altura(r->der));
+    }
+    void porNiveles(Nodo* r) {
+        if(!r) return;
+        queue&lt;Nodo*&gt; q; q.push(r);
+        while(!q.empty()){
+            Nodo* n=q.front();q.pop();
+            cout&lt;&lt;n->v&lt;&lt;" ";
+            if(n->izq) q.push(n->izq);
+            if(n->der) q.push(n->der);
+        }
+    }
+public:
+    void insertar(int v)    { raiz=insertar(raiz,v); }
+    bool buscar(int v)      { return buscar(raiz,v); }
+    void eliminar(int v)    { raiz=eliminar(raiz,v); }
+    void imprimirInorden()  { inorden(raiz); cout&lt;&lt;"\n"; }
+    void imprimirBFS()      { porNiveles(raiz); cout&lt;&lt;"\n"; }
+    int  getAltura()        { return altura(raiz); }
+};
+</pre>
+<h2>Prueba de la implementación</h2>
+<pre>
+BST arbol;
+for (int v : {10,5,15,3,7,12,20}) arbol.insertar(v);
+
+arbol.imprimirInorden();  // 3 5 7 10 12 15 20
+arbol.imprimirBFS();      // 10 5 15 3 7 12 20
+cout &lt;&lt; arbol.getAltura(); // 3
+cout &lt;&lt; arbol.buscar(7);   // 1 (true)
+arbol.eliminar(5);
+arbol.imprimirInorden();   // 3 7 10 12 15 20
+</pre>
+
+</body>
+</html>

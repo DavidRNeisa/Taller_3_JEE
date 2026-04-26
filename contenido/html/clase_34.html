@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 34: Parcial 3 — Evaluación de Estructuras No Lineales</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 34: Parcial 3 — Guía de Preparación</h1>
+<p class="subtitulo">Todo lo que debes dominar sobre árboles y grafos para la evaluación</p>
+<h2>Temario del Parcial 3</h2>
+<ul>
+  <li>Árboles BST: inserción, búsqueda, eliminación, recorridos.</li>
+  <li>Árboles AVL: factor de balance, tipos de rotación.</li>
+  <li>Heaps: inserción, extracción, heapify.</li>
+  <li>Tablas hash: función hash, colisiones, factor de carga.</li>
+  <li>Grafos: DFS, BFS, Dijkstra, Floyd-Warshall, MST.</li>
+</ul>
+<h2>Ejercicios de repaso rápido</h2>
+<h3>Árbol BST</h3>
+<pre>
+// Insertar: 50, 30, 70, 20, 40, 60, 80
+//           50
+//          /   \
+//        30     70
+//       /  \   /  \
+//      20  40  60  80
+// Inorden: 20 30 40 50 60 70 80 ✓
+// Altura: 3. Balance de raíz: 0.
+// Eliminar 30 (dos hijos):
+//   Sucesor inorden = 40. Reemplazar 30 por 40, eliminar 40 de su posición.
+</pre>
+<h3>Heap</h3>
+<pre>
+// Max-Heap: insertar 10, 20, 15, 30, 40
+// Paso a paso: [10] → [20,10] → [20,10,15] → [30,20,15,10] → [40,30,15,10,20]
+//      40
+//     /   \
+//    30    15
+//   /  \
+//  10   20
+// Extraer máximo (40): poner 20 en raíz, heapify-down
+// Resultado: [30,20,15,10]
+</pre>
+<h3>Dijkstra — traza</h3>
+<pre>
+// Grafo: 0→1(4), 0→2(1), 2→1(2), 1→3(1), 2→3(5)
+// Desde nodo 0:
+// Inicial: dist=[0,∞,∞,∞], pq=[(0,0)]
+// Procesar 0: dist=[0,4,1,∞], pq=[(1,2),(4,1)]
+// Procesar 2: dist=[0,3,1,6], pq=[(3,1),(4,1),(6,3)]
+// Procesar 1: dist=[0,3,1,4], pq=[(4,1),(4,3),(6,3)]
+// Resultado: 0→0:0, 0→1:3, 0→2:1, 0→3:4
+</pre>
+<h2>Fórmulas y propiedades clave</h2>
+<table>
+  <tr><th>Concepto</th><th>Fórmula / Propiedad</th></tr>
+  <tr><td>Árbol binario completo de n nodos</td><td>Altura = ⌊log₂ n⌋</td></tr>
+  <tr><td>Heap: padre de nodo i</td><td>(i-1)/2</td></tr>
+  <tr><td>Heap: hijos de nodo i</td><td>2i+1 y 2i+2</td></tr>
+  <tr><td>AVL: factor de balance válido</td><td>-1, 0, o +1</td></tr>
+  <tr><td>Euler: ciclo existe cuando</td><td>Todos los grados son pares</td></tr>
+  <tr><td>Floyd-Warshall</td><td>dist[i][j] = min(dist[i][j], dist[i][k]+dist[k][j])</td></tr>
+</table>
+<div class="alerta"><strong>Consejo final:</strong> en el parcial, dibuja siempre la estructura antes de calcular. Un diagrama correcto resuelve la mitad del ejercicio.</div>
+
+</body>
+</html>

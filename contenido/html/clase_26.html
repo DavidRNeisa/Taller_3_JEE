@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 26: Recorridos en Grafos: DFS y BFS</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 26: Recorridos en Grafos — DFS y BFS</h1>
+<p class="subtitulo">Explorar un grafo sistemáticamente: en profundidad y en anchura</p>
+<h2>El problema del recorrido</h2>
+<p>En un árbol, el recorrido es natural: comenzamos en la raíz. En un grafo, cualquier nodo puede ser el inicio, puede haber ciclos, y el grafo puede no ser conexo. Necesitamos un arreglo de visitados para evitar procesar el mismo nodo dos veces.</p>
+<h2>DFS — Búsqueda en Profundidad</h2>
+<p>Explora tan lejos como sea posible por cada rama antes de retroceder. Usa una pila (implícita con recursión).</p>
+<pre>
+vector&lt;vector&lt;int&gt;&gt; adj;  // lista de adyacencia
+vector&lt;bool&gt; visitado;
+
+void DFS(int v) {
+    visitado[v] = true;
+    cout &lt;&lt; v &lt;&lt; " ";
+    for (int u : adj[v]) {
+        if (!visitado[u])
+            DFS(u);
+    }
+}
+
+// DFS iterativo (sin recursión, con pila explícita)
+void DFS_iter(int inicio) {
+    stack&lt;int&gt; pila;
+    pila.push(inicio);
+    while (!pila.empty()) {
+        int v = pila.top(); pila.pop();
+        if (visitado[v]) continue;
+        visitado[v] = true;
+        cout &lt;&lt; v &lt;&lt; " ";
+        for (int u : adj[v]) if (!visitado[u]) pila.push(u);
+    }
+}
+// Complejidad: O(V + E)
+</pre>
+<h2>BFS — Búsqueda en Anchura</h2>
+<p>Explora por niveles: primero los vecinos directos, luego los vecinos de vecinos, etc. Usa una cola. Encuentra el camino más corto (en número de aristas) en grafos no ponderados.</p>
+<pre>
+void BFS(int inicio) {
+    queue&lt;int&gt; cola;
+    visitado[inicio] = true;
+    cola.push(inicio);
+    while (!cola.empty()) {
+        int v = cola.front(); cola.pop();
+        cout &lt;&lt; v &lt;&lt; " ";
+        for (int u : adj[v]) {
+            if (!visitado[u]) {
+                visitado[u] = true;
+                cola.push(u);
+            }
+        }
+    }
+}
+// Complejidad: O(V + E)
+</pre>
+<h2>Encontrar el camino más corto con BFS</h2>
+<pre>
+vector&lt;int&gt; caminoMasCorto(int origen, int destino, int V) {
+    vector&lt;int&gt; padre(V, -1);
+    vector&lt;bool&gt; vis(V, false);
+    queue&lt;int&gt; q;
+    vis[origen]=true; q.push(origen);
+    while (!q.empty()) {
+        int v=q.front(); q.pop();
+        if (v==destino) break;
+        for (int u : adj[v]) if (!vis[u]) { vis[u]=true; padre[u]=v; q.push(u); }
+    }
+    // Reconstruir el camino
+    vector&lt;int&gt; camino;
+    for (int v=destino; v!=-1; v=padre[v]) camino.push_back(v);
+    reverse(camino.begin(), camino.end());
+    return camino;
+}
+</pre>
+<h2>DFS vs BFS: cuándo usar cada uno</h2>
+<table>
+  <tr><th></th><th>DFS</th><th>BFS</th></tr>
+  <tr><td>Estructura</td><td>Pila (recursión)</td><td>Cola</td></tr>
+  <tr><td>Memoria</td><td>O(V) pila</td><td>O(V) cola</td></tr>
+  <tr><td>Camino más corto</td><td>No garantiza</td><td>Sí (sin pesos)</td></tr>
+  <tr><td>Detectar ciclos</td><td>Sí</td><td>Sí</td></tr>
+  <tr><td>Orden topológico</td><td>Sí</td><td>Sí (Kahn)</td></tr>
+  <tr><td>Grafos con solución profunda</td><td>Mejor</td><td>Peor</td></tr>
+</table>
+
+</body>
+</html>

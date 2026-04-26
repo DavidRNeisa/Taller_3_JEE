@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 15: Árboles Balanceados: AVL y Red-Black</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 15: Árboles Balanceados</h1>
+<p class="subtitulo">Garantizar O(log n) en todos los casos</p>
+<h2>El problema del BST no balanceado</h2>
+<p>Un BST con inserción ordenada degenera en una lista. Los árboles balanceados impiden esto manteniendo la altura controlada: O(log n) garantizado.</p>
+<h2>Factor de balance (AVL)</h2>
+<p>El <strong>factor de balance</strong> de un nodo es: altura(subárbol derecho) − altura(subárbol izquierdo). En un árbol AVL, este valor debe ser -1, 0 o +1 para todo nodo.</p>
+<pre>
+struct NodoAVL {
+    int  valor, altura;
+    NodoAVL *izq, *der;
+};
+
+int altura(NodoAVL* n) { return n ? n->altura : 0; }
+int balance(NodoAVL* n) { return n ? altura(n->der)-altura(n->izq) : 0; }
+</pre>
+<h2>Rotaciones AVL</h2>
+<pre>
+// Rotación simple derecha (caso LL)
+NodoAVL* rotDerecha(NodoAVL* y) {
+    NodoAVL* x  = y->izq;
+    NodoAVL* T2 = x->der;
+    x->der = y;  y->izq = T2;
+    y->altura = 1 + max(altura(y->izq), altura(y->der));
+    x->altura = 1 + max(altura(x->izq), altura(x->der));
+    return x;  // nueva raíz
+}
+// Rotación simple izquierda (caso RR) — simétrica
+
+// Caso LR: rotación izquierda en hijo, luego derecha en raíz
+// Caso RL: rotación derecha en hijo, luego izquierda en raíz
+</pre>
+<h2>¿Cuándo rotar?</h2>
+<table>
+  <tr><th>Caso</th><th>Condición</th><th>Solución</th></tr>
+  <tr><td>LL</td><td>balance=-2, bal(izq)≤0</td><td>Rotar derecha</td></tr>
+  <tr><td>RR</td><td>balance=+2, bal(der)≥0</td><td>Rotar izquierda</td></tr>
+  <tr><td>LR</td><td>balance=-2, bal(izq)>0</td><td>Rotar izq en hijo, luego derecha</td></tr>
+  <tr><td>RL</td><td>balance=+2, bal(der)&lt;0</td><td>Rotar der en hijo, luego izquierda</td></tr>
+</table>
+<h2>Árboles Red-Black</h2>
+<p>Alternativa al AVL, usada en la STL (<code>map</code>, <code>set</code>). Sus 5 propiedades garantizan que la altura sea siempre O(log n):</p>
+<ol>
+  <li>Todo nodo es rojo o negro.</li>
+  <li>La raíz es negra.</li>
+  <li>Las hojas (NULL) son negras.</li>
+  <li>Un nodo rojo sólo puede tener hijos negros.</li>
+  <li>Todo camino desde un nodo hasta sus hojas tiene el mismo número de nodos negros (<em>black-height</em>).</li>
+</ol>
+<h2>AVL vs Red-Black</h2>
+<table>
+  <tr><th></th><th>AVL</th><th>Red-Black</th></tr>
+  <tr><td>Balance</td><td>Más estricto</td><td>Más relajado</td></tr>
+  <tr><td>Rotaciones en inserción</td><td>Más frecuentes</td><td>Máximo 2</td></tr>
+  <tr><td>Búsqueda</td><td>Ligeramente más rápida</td><td>Ligeramente más lenta</td></tr>
+  <tr><td>Inserción/Eliminación</td><td>Más costosa</td><td>Más barata</td></tr>
+  <tr><td>Uso en STL</td><td>No</td><td>Sí (map, set)</td></tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clase 27: Caminos de Euler y Hamilton</title>
+<style>:root { --bg:#f8fafc; --card:#ffffff; --text:#1f2937; --muted:#64748b; --accent:#2563eb; --accent-soft:#dbeafe; --border:#e5e7eb; --warn:#fff7ed; --warn-border:#fdba74; --note:#ecfdf5; --note-border:#86efac; --danger:#fef2f2; --danger-border:#fca5a5; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; font-family: Arial, Helvetica, sans-serif; line-height: 1.65; color: var(--text); background: var(--bg); }
+body > * { max-width: 980px; margin-left: auto; margin-right: auto; }
+h1 { margin-top: 0; padding-bottom: 12px; border-bottom: 4px solid var(--accent); color: #0f172a; font-size: 2.2rem; }
+h2 { margin-top: 34px; color: #1d4ed8; font-size: 1.45rem; }
+h3 { margin-top: 24px; color: #334155; }
+.subtitulo { color: var(--muted); font-size: 1.15rem; font-style: italic; margin-top: -6px; }
+p, li { font-size: 1rem; }
+ul, ol { padding-left: 1.5rem; }
+table { width: 100%; border-collapse: collapse; margin: 18px auto; background: var(--card); box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); color: #1e3a8a; }
+pre { overflow-x: auto; background: #0f172a; color: #e5e7eb; padding: 16px; border-radius: 10px; font-size: .92rem; line-height: 1.45; }
+code { background: #e2e8f0; padding: 2px 5px; border-radius: 5px; }
+pre code { background: transparent; padding: 0; }
+.concepto, .nota, .alerta { padding: 14px 16px; border-radius: 10px; margin: 18px auto; border-left: 6px solid; background: var(--card); }
+.concepto { background: var(--accent-soft); border-left-color: var(--accent); }
+.nota { background: var(--note); border-left-color: var(--note-border); }
+.alerta { background: var(--danger); border-left-color: var(--danger-border); }
+a { color: var(--accent); }</style>
+</head>
+<body>
+
+<h1>Clase 27: Caminos de Euler y Hamilton</h1>
+<p class="subtitulo">Dos problemas clásicos con naturaleza computacional muy diferente</p>
+<h2>Camino y Ciclo de Euler</h2>
+<p>Un <strong>camino de Euler</strong> recorre cada <em>arista</em> exactamente una vez. Si regresa al nodo inicial, es un <strong>ciclo de Euler</strong>. Este problema tiene solución eficiente.</p>
+<h3>Condiciones de existencia</h3>
+<table>
+  <tr><th>Tipo</th><th>Condición (grafo no dirigido)</th></tr>
+  <tr><td>Ciclo de Euler</td><td>Todos los vértices tienen grado par Y el grafo es conexo</td></tr>
+  <tr><td>Camino de Euler</td><td>Exactamente 2 vértices tienen grado impar Y el grafo es conexo</td></tr>
+</table>
+<pre>
+bool tieneCicloEuler(vector&lt;vector&lt;int&gt;&gt;& adj, int V) {
+    for (int v = 0; v &lt; V; v++)
+        if (adj[v].size() % 2 != 0) return false;
+    return esConexo(adj, V);
+}
+
+// Algoritmo de Hierholzer para encontrar el ciclo — O(E)
+void hierholzer(int inicio, vector&lt;vector&lt;int&gt;&gt;& adj) {
+    stack&lt;int&gt; pila;
+    vector&lt;int&gt; ciclo;
+    pila.push(inicio);
+    while (!pila.empty()) {
+        int v = pila.top();
+        if (adj[v].empty()) { ciclo.push_back(v); pila.pop(); }
+        else { pila.push(adj[v].back()); adj[v].pop_back(); }
+    }
+    for (int v : ciclo) cout &lt;&lt; v &lt;&lt; " ";
+}
+</pre>
+<h3>Aplicación histórica</h3>
+<p>El origen: los 7 puentes de Königsberg (1736). Euler demostró que no existía un camino que cruzara cada puente exactamente una vez, fundando la teoría de grafos.</p>
+<h2>Camino y Ciclo de Hamilton</h2>
+<p>Un <strong>camino de Hamilton</strong> visita cada <em>vértice</em> exactamente una vez. Si regresa al inicio, es un <strong>ciclo de Hamilton</strong>. Este problema es NP-completo — no se conoce algoritmo eficiente general.</p>
+<pre>
+// Solución por backtracking — O(n!) en peor caso
+vector&lt;int&gt; camino;
+vector&lt;bool&gt; visitado;
+
+bool hamilton(int actual, int inicio, int visitados, int V,
+              vector&lt;vector&lt;int&gt;&gt;& adj) {
+    if (visitados == V) {
+        // Verificar si hay arista de vuelta al inicio
+        for (int u : adj[actual]) if (u==inicio) return true;
+        return false;
+    }
+    for (int u : adj[actual]) {
+        if (!visitado[u]) {
+            visitado[u]=true; camino.push_back(u);
+            if (hamilton(u, inicio, visitados+1, V, adj)) return true;
+            visitado[u]=false; camino.pop_back();
+        }
+    }
+    return false;
+}
+</pre>
+<h2>Diferencia fundamental</h2>
+<table>
+  <tr><th></th><th>Euler</th><th>Hamilton</th></tr>
+  <tr><td>Recorre</td><td>Cada arista una vez</td><td>Cada vértice una vez</td></tr>
+  <tr><td>Complejidad</td><td>O(E) — polinomial</td><td>O(n!) — NP-completo</td></tr>
+  <tr><td>Condición verificable</td><td>Sí (grados)</td><td>No (en general)</td></tr>
+  <tr><td>Aplicaciones</td><td>Cartero chino, ruteo</td><td>TSP, ADN assembly</td></tr>
+</table>
+
+</body>
+</html>
