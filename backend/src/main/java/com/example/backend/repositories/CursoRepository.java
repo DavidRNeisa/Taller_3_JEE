@@ -1,5 +1,7 @@
 package com.example.backend.repositories;
 
-public class CursoRepository {
-    
+import com.example.backend.entities.Curso;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CursoRepository extends JpaRepository<Curso, Long> {
 }
