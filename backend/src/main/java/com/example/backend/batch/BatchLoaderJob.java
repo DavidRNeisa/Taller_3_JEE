@@ -6,6 +6,7 @@ import com.example.backend.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -15,23 +16,30 @@ public class BatchLoaderJob {
     private final CursoRepository cursoRepository;
     private final ClaseRepository claseRepository;
     private final ContenidoRepository contenidoRepository;
+    private final TareaRepository tareaRepository;
+    private final AlumnoRepository alumnoRepository;
+    private final InscripcionRepository inscripcionRepository;
 
     public void ejecutar() {
-        cargarClases();
+        cargarCursoYClases();
         cargarContenidos();
+        cargarTareas();
+        cargarAlumnoDemo();
     }
 
-    public void cargarClases() {
+    public void cargarCursoYClases() {
 
-        if (cursoRepository.count() > 0) return;
+        Curso curso = cursoRepository.findAll().stream().findFirst().orElseGet(() ->
+                cursoRepository.save(Curso.builder()
+                        .titulo("Estructuras de Datos")
+                        .descripcion("Curso completo de estructuras de datos")
+                        .totalClases(3)
+                        .build())
+        );
 
-        Curso curso = Curso.builder()
-                .titulo("Estructuras de Datos")
-                .descripcion("Curso completo de estructuras de datos")
-                .totalClases(3)
-                .build();
-
-        curso = cursoRepository.save(curso);
+        if (!claseRepository.findByCursoId(curso.getId()).isEmpty()) {
+            return;
+        }
 
         Clase clase1 = Clase.builder()
                 .numero(1)
@@ -68,5 +76,54 @@ public class BatchLoaderJob {
 
             contenidoRepository.save(contenido);
         }
+    }
+
+    public void cargarTareas() {
+
+        if (tareaRepository.count() > 0) {
+            return;
+        }
+
+        List<Clase> clases = claseRepository.findAll();
+        if (clases.isEmpty()) {
+            return;
+        }
+
+        for (Clase clase : clases) {
+            Tarea tarea = Tarea.builder()
+                    .titulo("Tarea clase " + clase.getNumero())
+                    .descripcion("Entrega practica de la clase " + clase.getNumero())
+                    .fechaLimite(LocalDateTime.now().plusDays(5 + clase.getNumero()))
+                    .ponderacion(20.0)
+                    .clase(clase)
+                    .build();
+
+            tareaRepository.save(tarea);
+        }
+    }
+
+    public void cargarAlumnoDemo() {
+
+        Alumno alumno = alumnoRepository.findByEmail("alumno.demo@lms.local")
+                .orElseGet(() -> alumnoRepository.save(Alumno.builder()
+                        .nombre("Alumno Demo")
+                        .email("alumno.demo@lms.local")
+                        .claseActual(1)
+                        .build()));
+
+        if (inscripcionRepository.findByAlumnoId(alumno.getId()).isPresent()) {
+            return;
+        }
+
+        Curso curso = cursoRepository.findAll().stream().findFirst().orElse(null);
+        if (curso == null) {
+            return;
+        }
+
+        inscripcionRepository.save(Inscripcion.builder()
+                .alumno(alumno)
+                .curso(curso)
+                .fechaInscripcion(LocalDateTime.now())
+                .build());
     }
 }

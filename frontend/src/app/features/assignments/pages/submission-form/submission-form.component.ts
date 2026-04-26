@@ -115,11 +115,16 @@ export class SubmissionFormComponent implements OnInit {
 		this.submitting = true;
 		this.errorMessage = '';
 
-		// Mock de subida; reemplazar por llamada HTTP real.
-		setTimeout(() => {
-			this.submitting = false;
-			this.submitSuccess = true;
-		}, 700);
+		this.courseService.submitAssignment(1, this.assignment.id, this.selectedFile!).subscribe({
+			next: () => {
+				this.submitting = false;
+				this.submitSuccess = true;
+			},
+			error: () => {
+				this.submitting = false;
+				this.errorMessage = 'No se pudo registrar la entrega. Intenta nuevamente.';
+			}
+		});
 	}
 
 	backToAssignments(): void {

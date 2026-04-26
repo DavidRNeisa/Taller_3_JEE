@@ -21,7 +21,6 @@ import com.example.backend.entities.Tarea;
 import com.example.backend.repositories.CalificacionRepository;
 import com.example.backend.repositories.ClaseRepository;
 import com.example.backend.repositories.ContenidoRepository;
-import com.example.backend.repositories.CursoRepository;
 import com.example.backend.repositories.EntregaRepository;
 import com.example.backend.repositories.TareaRepository;
 
@@ -30,36 +29,13 @@ public class CourseRoutesConfig {
 
 	@Bean
 	public RouterFunction<ServerResponse> courseRoutes(
-			CursoRepository cursoRepository,
 			ClaseRepository claseRepository,
 			ContenidoRepository contenidoRepository,
 			TareaRepository tareaRepository,
 			EntregaRepository entregaRepository,
 			CalificacionRepository calificacionRepository
 	) {
-		return route(GET("/api/cursos"), request -> ServerResponse.ok().body(
-				cursoRepository.findAll().stream()
-						.map(curso -> Map.<String, Object>of(
-								"id", curso.getId(),
-								"titulo", curso.getTitulo(),
-								"descripcion", curso.getDescripcion(),
-								"totalClases", curso.getTotalClases()
-						))
-						.toList()
-		))
-				.andRoute(GET("/api/cursos/{id}"), request -> {
-					Long courseId = Long.valueOf(request.pathVariable("id"));
-					return cursoRepository.findById(courseId)
-							.map(curso -> Map.<String, Object>of(
-									"id", curso.getId(),
-									"titulo", curso.getTitulo(),
-									"descripcion", curso.getDescripcion(),
-									"totalClases", curso.getTotalClases()
-							))
-							.map(course -> ServerResponse.ok().body(course))
-							.orElseGet(() -> ServerResponse.notFound().build());
-				})
-				.andRoute(GET("/api/cursos/{id}/clases"), request -> {
+		return route(GET("/api/cursos/{id}/clases"), request -> {
 					Long courseId = Long.valueOf(request.pathVariable("id"));
 
 					List<LessonResponse> lessons = claseRepository.findByCursoId(courseId).stream()

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Course } from '../../models/course.model';
@@ -60,6 +60,14 @@ interface BackendGradeResponse {
   score?: number;
   feedback?: string;
   status: Grade['status'];
+}
+
+interface BackendEntregaResponse {
+  id: number;
+  tareaId: number;
+  fechaEntrega: string;
+  archivoUrl: string;
+  estado: string;
 }
 
 @Injectable({
@@ -149,6 +157,15 @@ export class CourseService {
         status: grade.status
       })))
     );
+  }
+
+  submitAssignment(alumnoId: number, assignmentId: number, file: File): Observable<BackendEntregaResponse> {
+    const formData = new FormData();
+    formData.append('alumnoId', String(alumnoId));
+    formData.append('tareaId', String(assignmentId));
+    formData.append('archivo', file);
+
+    return this.http.post<BackendEntregaResponse>(`${this.apiUrl}/entregas`, formData);
   }
 
   private mapCourse(course: BackendCourseResponse, index = 0): Course {

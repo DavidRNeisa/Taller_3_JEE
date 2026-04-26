@@ -1,5 +1,6 @@
 package com.example.backend.controllers.entrega;
 
+import com.example.backend.dtos.response.EntregaResponse;
 import com.example.backend.entities.Entrega;
 import com.example.backend.services.EntregaService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class EntregaController {
     private final EntregaService entregaService;
 
     @PostMapping
-    public ResponseEntity<Entrega> entregarTarea(
+    public ResponseEntity<EntregaResponse> entregarTarea(
             @RequestParam Long alumnoId,
             @RequestParam Long tareaId,
             @RequestParam MultipartFile archivo
@@ -23,6 +24,14 @@ public class EntregaController {
 
         Entrega entrega = entregaService.registrarEntrega(alumnoId, tareaId, archivo);
 
-        return ResponseEntity.ok(entrega);
+        EntregaResponse response = EntregaResponse.builder()
+                .id(entrega.getId())
+                .tareaId(entrega.getTarea() != null ? entrega.getTarea().getId() : null)
+                .fechaEntrega(entrega.getFechaEntrega())
+                .archivoUrl(entrega.getArchivoUrl())
+                .estado(entrega.getEstadoEntrega())
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }
