@@ -1,1 +1,65 @@
-// Angular file: src/app/features/recommendations/recommendations.component.html
+<main class="recommendations-page">
+	<header class="page-header">
+		<a routerLink="/home" class="back-btn">← Volver a inicio</a>
+		<h1>Panel de Recomendaciones</h1>
+		<p class="subtitle">Sugerencias personalizadas segun tu avance academico.</p>
+	</header>
+
+	<section *ngIf="loading" class="status-card">
+		<p>Cargando recomendaciones...</p>
+	</section>
+
+	<section *ngIf="!loading && errorMessage" class="status-card error">
+		<p>{{ errorMessage }}</p>
+	</section>
+
+	<ng-container *ngIf="!loading && panel && !errorMessage">
+		<section class="summary-grid" aria-label="Resumen de progreso">
+			<article class="summary-card">
+				<p class="label">Cursos inscritos</p>
+				<p class="value">{{ panel.enrolledCourses }}</p>
+			</article>
+			<article class="summary-card">
+				<p class="label">Temas monitoreados</p>
+				<p class="value">{{ panel.lessonsTracked }}</p>
+			</article>
+			<article class="summary-card">
+				<p class="label">Avance promedio</p>
+				<p class="value">{{ panel.averageProgress }}%</p>
+			</article>
+		</section>
+
+		<section class="recommendation-card" aria-label="Tema siguiente sugerido">
+			<h2>Tema siguiente sugerido</h2>
+			<ng-container *ngIf="panel.nextSuggestedTopic as nextTopic; else noNextTopic">
+				<p class="topic-title">{{ nextTopic.lessonTitle }}</p>
+				<p class="meta">{{ nextTopic.courseTitle }} · Leccion {{ nextTopic.lessonOrder }}</p>
+				<p class="reason">{{ nextTopic.reason }}</p>
+				<a class="action-btn" [routerLink]="['/courses', nextTopic.courseId, 'lessons', nextTopic.lessonId]">
+					Ir a la leccion
+				</a>
+			</ng-container>
+			<ng-template #noNextTopic>
+				<p class="reason">No hay temas pendientes por sugerir. Buen trabajo.</p>
+			</ng-template>
+		</section>
+
+		<section class="recommendation-card" aria-label="Temas de refuerzo">
+			<h2>Temas de refuerzo</h2>
+			<ul *ngIf="panel.reinforcementTopics.length; else noReinforcement" class="reinforcement-list">
+				<li *ngFor="let topic of panel.reinforcementTopics" class="reinforcement-item">
+					<div>
+						<p class="topic-title">{{ topic.lessonTitle }}</p>
+						<p class="meta">{{ topic.courseTitle }} · Leccion {{ topic.lessonOrder }}</p>
+						<p class="reason">{{ topic.reason }}</p>
+					</div>
+					<div class="progress-pill">{{ topic.progress }}%</div>
+					<a class="text-link" [routerLink]="['/courses', topic.courseId, 'lessons', topic.lessonId]">Repasar</a>
+				</li>
+			</ul>
+			<ng-template #noReinforcement>
+				<p class="reason">No hay temas criticos para reforzar en este momento.</p>
+			</ng-template>
+		</section>
+	</ng-container>
+</main>

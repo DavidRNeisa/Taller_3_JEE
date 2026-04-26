@@ -6,6 +6,7 @@ import { LessonViewerComponent } from './features/courses/pages/lesson-viewer/le
 import { AssignmentListComponent } from './features/courses/pages/assignment-list/assignment-list.component';
 import { SubmissionFormComponent } from './features/assignments/pages/submission-form/submission-form.component';
 import { GradesOverviewComponent } from './features/grades/pages/grades-overview/grades-overview.component';
+import { RecommendationsComponent } from './features/recommendations/recommendations.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'courses/:courseId/assignments', component: AssignmentListComponent },
   { path: 'courses/:courseId/assignments/:assignmentId/submit', component: SubmissionFormComponent },
   { path: 'courses/:courseId/grades', component: GradesOverviewComponent },
+  { path: 'recommendations', component: RecommendationsComponent },
   { path: 'courses/:id', component: CourseDetailComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: 'home' }
