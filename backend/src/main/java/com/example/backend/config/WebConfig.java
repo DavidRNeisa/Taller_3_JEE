@@ -13,12 +13,19 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${app.storage.location:uploads}")
     private String storageLocation;
 
+    @Value("${app.content.location:../contenido}")
+    private String contentLocation;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         Path uploadPath = Paths.get(storageLocation).toAbsolutePath().normalize();
+        Path contentPath = Paths.get(contentLocation).toAbsolutePath().normalize();
 
         registry.addResourceHandler("/files/**")
-                .addResourceLocations("file:" + uploadPath.toString() + "/");
+                .addResourceLocations("file:" + uploadPath + "/");
+
+        registry.addResourceHandler("/contenido/**")
+                .addResourceLocations("file:" + contentPath + "/");
     }
 }

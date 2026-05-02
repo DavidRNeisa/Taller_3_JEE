@@ -93,3 +93,21 @@ backend/.nb-gradle/
 
 # IntelliJ metadata (backend scoped)
 backend/.idea/
+
+# .NET build output
+message-consumer/bin/
+message-consumer/obj/
+message-consumer/messages.db
+*.db
+
+# Node / Angular
+frontend/node_modules/
+node_modules/
+frontend/dist/
+
+# Java / Maven
+backend/target/
+target/
+
+# VS Code local
+.vscode/

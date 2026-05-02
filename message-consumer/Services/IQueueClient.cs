@@ -8,5 +8,9 @@ namespace MessageConsumer.Services
     public interface IQueueClient
     {
         Task<QueueMessage?> ReceiveMessageAsync(CancellationToken cancellationToken);
+
+        Task SendMessageAsync(QueueMessage message, CancellationToken cancellationToken);
+
+        Task<int> SeedSampleMessagesAsync(CancellationToken cancellationToken);
     }
 }
