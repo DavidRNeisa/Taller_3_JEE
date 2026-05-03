@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite("Data Source=messages.db"));
 
-builder.Services.AddSingleton<IQueueClient, InMemoryQueueClient>();
+builder.Services.AddSingleton<IQueueClient, RabbitMqQueueClient>();
 builder.Services.AddHostedService<ConsumerService>();
 
 var app = builder.Build();
