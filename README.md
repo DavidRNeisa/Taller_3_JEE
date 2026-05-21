@@ -188,3 +188,18 @@ src/
 * Cada entrega pertenece a un alumno y una tarea
 * Solo el docente puede calificar
 
+## Implementación de Pruebas
+
+Con base en el Taller No. 2 de Jakarta, realizar las siguientes pruebas técnicas
+    - Disponibilidad
+    - Escalabilidad
+
+Con base en el taller No. 2 de Registra las pruebas tenicas.
+
+Realizar las pruebas de usabilidad de las presentacaiones realizadas en JEE y .NET.
+
+Realizar las pruebas de aceptación de los 2 talleres.
+
+Hay que entregar:
+    - Documento especificando como hacer las pruebas
+    - Funcionalidad normal, con pruebas que permitan su chequeo
