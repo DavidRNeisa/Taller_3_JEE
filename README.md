@@ -198,7 +198,7 @@ Con base en el taller No. 2 de Registra las pruebas tenicas.
 
 Realizar las pruebas de usabilidad de las presentacaiones realizadas en JEE y .NET.
 
-Realizar las pruebas de aceptación de los 2 talleres.
+Realizar las pruebas de aceptación.
 
 Hay que entregar:
     - Documento especificando como hacer las pruebas
