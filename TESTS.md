@@ -91,10 +91,14 @@ Realizar las pruebas de aceptación.
    - Incluir pasos detallados, herramientas utilizadas y métricas a evaluar.
 
 ### 5. **Automatización de pruebas**
-   - Implementar pruebas automatizadas para las funcionalidades clave utilizando frameworks como:
-     - **JUnit** para el backend en Spring Boot.
-     - **Selenium** para pruebas de interfaz en Angular.
-     - **xUnit** para la aplicación en .NET.
+    - Implementar pruebas automatizadas para las funcionalidades clave utilizando frameworks según la capa a validar.
+    - **Implementación realizada en el backend**:
+       - **JUnit 5** + **Mockito** para pruebas unitarias de servicios.
+       - **MockMvc** y pruebas de controlador tipo contrato para validar la capa REST.
+       - Flujos cubiertos: creación y edición de cursos, registro de entregas, cálculo de estado y nota, y generación de recomendaciones.
+    - **Ejecución de las pruebas implementadas**:
+       - Desde `backend/`: `JAVA_HOME=/home/davidrneisa/.jdk/jdk-17.0.16 ./mvnw clean test`
+       - Para ejecutar solo la nueva suite: `JAVA_HOME=/home/davidrneisa/.jdk/jdk-17.0.16 ./mvnw clean -Dtest=CursoServiceTest,EntregaServiceTest,RecomendacionServiceTest,CursoControllerTest test`
 
 ### 6. **Entrega**
    - Asegurarse de que las pruebas sean reproducibles y estén documentadas.
