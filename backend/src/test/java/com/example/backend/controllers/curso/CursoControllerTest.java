@@ -1,22 +1,22 @@
 package com.example.backend.controllers.curso;
 
-import com.example.backend.dtos.request.CursoRequest;
-import com.example.backend.dtos.response.CursoResponse;
-import com.example.backend.services.CursoService;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.example.backend.dtos.request.CursoRequest;
+import com.example.backend.dtos.response.CursoResponse;
+import com.example.backend.services.CursoService;
 
 @ExtendWith(MockitoExtension.class)
 class CursoControllerTest {

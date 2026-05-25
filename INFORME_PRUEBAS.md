@@ -398,6 +398,135 @@ ORDER BY id DESC;
   - Captura del mensaje `No se pudo registrar la entrega. Intenta nuevamente.`
   - Log del backend con la causa real.
 
+## 5. Ejecución de pruebas: comandos, instrucciones y resultados
+
+Esta sección recoge cómo ejecutar las pruebas disponibles en el repositorio, las salidas que obtuvimos en las ejecuciones realizadas y recomendaciones para reproducir los resultados localmente.
+
+### 5.1 Requisitos y notas previas
+
+- Sistema: Linux (comandos mostrados son POSIX/bash).
+- No se instalan dependencias adicionales para las "smoke tests" del frontend: el script `tests/frontend_smoke.sh` usa únicamente `npm run build` y comprobaciones de archivos en `dist`.
+- Para ejecutar las pruebas de backend es necesario un JDK compatible. En este entorno usamos JDK 17.
+- Asegúrate de que el backend esté parado antes de ejecutar ciertos comandos de compilación o pruebas que ocupen puertos.
+
+### 5.2 Comandos principales (copy/paste)
+
+- Ejecutar todos los tests de backend (usa el Maven Wrapper incluido en `backend`):
+
+```bash
+export JAVA_HOME=/home/davidrneisa/.jdk/jdk-17.0.16
+export PATH="$JAVA_HOME/bin:$PATH"
+./backend/mvnw -f backend/pom.xml clean test
+```
+
+- Ejecutar un subconjunto de tests (ej.: solo servicios y controladores añadidos):
+
+```bash
+export JAVA_HOME=/home/davidrneisa/.jdk/jdk-17.0.16
+export PATH="$JAVA_HOME/bin:$PATH"
+./backend/mvnw -f backend/pom.xml -Dtest=CursoServiceTest,EntregaServiceTest,RecomendacionServiceTest,CursoControllerTest test
+```
+
+- Test de carga (script existente `tests/load_test.sh`). Requiere que la aplicación backend esté en `http://localhost:8080`:
+
+```bash
+# sintaxis: bash tests/load_test.sh <url> <requests> <concurrency>
+bash tests/load_test.sh http://localhost:8080/api/cursos 200 30
+```
+
+- Build del frontend (usa los scripts ya presentes en `frontend/package.json`):
+
+```bash
+cd frontend
+npm run build
+cd -
+```
+
+- Smoke-tests del frontend (NO instala nada):
+
+```bash
+bash tests/frontend_smoke.sh
+```
+
+### 5.3 Resultados obtenidos (ejecuciones realizadas durante el informe)
+
+- Backend (Maven + JUnit 5 + Mockito):
+  - Comando usado: `./backend/mvnw -f backend/pom.xml clean test`
+  - Resultado final: Tests run: 15, Failures: 0, Errors: 0, Skipped: 0
+  - Observación: en una pasada intermedia hubo un fallo localizado en `RecomendacionServiceTest` que se corrigió; la ejecución final fue exitosa.
+
+- Load test (ApacheBench via `tests/load_test.sh`):
+  - Comando: `bash tests/load_test.sh http://localhost:8080/api/cursos 200 30`
+  - Resultado resumido: 200 requests, Failed requests: 0, Requests/sec ≈ 5014.04 (valor observado en la ejecución)
+
+- Frontend build y smoke-tests:
+  - Comando build: `cd frontend && npm run build`
+  - Output: build colocado en `frontend/dist/frontend` (subdirectorio `browser` con `index.html` y bundles JS)
+  - Smoke-test: `bash tests/frontend_smoke.sh` — PASADO. El script comprobó la existencia de `index.html` y bundles `.js` en la salida del build.
+
+### 5.4 Consideraciones y resolución de problemas comunes
+
+- Problema: "bad class file: ... class file has wrong version 69.0, should be 61.0"
+  - Causa: clases compiladas con una versión de JDK superior a la que usa Maven/`javac` durante las pruebas.
+  - Solución: fijar `JAVA_HOME` a JDK 17 y limpiar `target` antes de compilar/tests:
+
+```bash
+export JAVA_HOME=/home/davidrneisa/.jdk/jdk-17.0.16
+export PATH="$JAVA_HOME/bin:$PATH"
+./backend/mvnw -f backend/pom.xml clean
+```
+
+- Si ves errores de compilación por paquetes de Spring Test (p. ej. `org.springframework.boot.test.autoconfigure.web.servlet` no existe), revisa que `spring-boot-starter-test` está presente en `backend/pom.xml` y que tu conexión de Maven puede descargar las dependencias (necesita acceso a internet al resolver por primera vez).
+
+### 5.5 Cómo ejecutar todo (flujo recomendado)
+
+1. Asegúrate que el JDK correcto está seleccionado y `JAVA_HOME` exportado.
+2. Ejecuta los tests de backend:
+
+```bash
+export JAVA_HOME=/home/davidrneisa/.jdk/jdk-17.0.16
+export PATH="$JAVA_HOME/bin:$PATH"
+./backend/mvnw -f backend/pom.xml clean test
+```
+
+3. Si necesitas una prueba de carga rápida (con el backend corriendo), ejecuta:
+
+```bash
+bash tests/load_test.sh http://localhost:8080/api/cursos 200 30
+```
+
+4. Para validar el frontend sin instalar nada adicional:
+
+```bash
+bash tests/frontend_smoke.sh
+```
+
+### 5.6 Ejecutar tests unitarios completos del frontend (opcional — requiere instalar devDependencies)
+
+Si quieres ejecutar los unit tests de Angular (Karma + Jasmine), actualmente faltan devDependencies en `frontend/package.json`. Comandos y paquetes necesarios (ejecutar solo si autorizas instalar):
+
+```bash
+cd frontend
+# instalar paquetes de test (ejemplo mínimo)
+npm install --no-audit --no-fund --save-dev karma karma-jasmine jasmine-core karma-chrome-launcher karma-jasmine-html-reporter karma-coverage @types/jasmine
+
+# ejecutar tests en headless
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+Nota: después de instalar algunas dependencias, durante nuestras pruebas apareció la necesidad de `karma-coverage`. Si falta, añadirla con `npm install --save-dev karma-coverage`.
+
+### 5.7 Recomendaciones finales
+
+- Para integraciones CI: ejecutar `./backend/mvnw -f backend/pom.xml -DskipTests=false test` y `bash tests/frontend_smoke.sh` como checks rápidos sin instalar devDeps.
+- Si se desea cobertura y tests unitarios frontend en CI, agregar las devDependencies de Karma y ejecutar `npm test` en un job separado que permita instalación de paquetes.
+- Documentar en el README del proyecto (o en `TESTS.md`) la ruta del JDK requerida y el uso del script `tests/frontend_smoke.sh` para que otros desarrolladores reproduzcan fácilmente sin instalar paquetes.
+
+---
+
+Fin de la sección de ejecución de pruebas.
+
+
 ### 4.4 Calificación de tareas por docentes
 
 #### Caso AC-14: Visualización de calificaciones

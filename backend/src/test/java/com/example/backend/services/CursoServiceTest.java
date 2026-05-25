@@ -1,24 +1,24 @@
 package com.example.backend.services;
 
-import com.example.backend.dtos.request.CursoRequest;
-import com.example.backend.dtos.response.CursoResponse;
-import com.example.backend.entities.Curso;
-import com.example.backend.repositories.CursoRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.example.backend.dtos.request.CursoRequest;
+import com.example.backend.dtos.response.CursoResponse;
+import com.example.backend.entities.Curso;
+import com.example.backend.repositories.CursoRepository;
 
 @ExtendWith(MockitoExtension.class)
 class CursoServiceTest {
