@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "LMS Availability and Acceptance",
+    "description": "Collection for critical LMS endpoint checks.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET Cursos",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/cursos"
+      }
+    },
+    {
+      "name": "GET Curso Por ID",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/cursos/{{cursoId}}"
+      }
+    },
+    {
+      "name": "GET Clases Por Curso",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/clases/curso/{{cursoId}}"
+      }
+    },
+    {
+      "name": "GET Contenidos Por Clase",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/contenidos/clase/{{claseId}}"
+      }
+    },
+    {
+      "name": "GET Tareas Por Clase",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/tareas/clase/{{claseId}}"
+      }
+    },
+    {
+      "name": "POST Entrega (sin archivo - negativo)",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/entregas?alumnoId={{alumnoId}}&tareaId={{tareaId}}"
+      }
+    },
+    {
+      "name": "GET Calificaciones",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/calificaciones/{{alumnoId}}"
+      }
+    },
+    {
+      "name": "GET Recomendaciones",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/recomendaciones/{{alumnoId}}"
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "cursoId", "value": "1" },
+    { "key": "claseId", "value": "1" },
+    { "key": "alumnoId", "value": "1" },
+    { "key": "tareaId", "value": "1" }
+  ]
+}
